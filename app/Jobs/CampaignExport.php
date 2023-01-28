@@ -13,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use ZipArchive;
@@ -141,6 +142,13 @@ class CampaignExport implements ShouldQueue
         if ($queue !== 'sync') {
             CampaignExportCleanup::dispatch($this->campaign)->delay(now()->addMinutes(60));
         }
+
+        Log::info('Campaign export ready', [
+            'user' => $this->user->id,
+            'campaign' => $this->campaign->id,
+            'path' => $downloadPath,
+            'asset' => false,
+        ]);
     }
 
     /**
@@ -161,6 +169,12 @@ class CampaignExport implements ShouldQueue
             'times',
             'red'
         ));
+
+        Log::info('Campaign export failed', [
+            'user' => $this->user->id,
+            'campaign' => $this->campaign->id,
+            'asset' => false,
+        ]);
 
         // Sentry will handle the rest
     }

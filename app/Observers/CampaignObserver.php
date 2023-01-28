@@ -18,6 +18,7 @@ use App\Services\EntityMappingService;
 use App\Services\ImageService;
 use App\Services\StarterService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CampaignObserver
@@ -139,6 +140,10 @@ class CampaignObserver
         UserCache::clearCampaigns();
 
         auth()->user()->log(UserLog::TYPE_CAMPAIGN_NEW);
+        Log::info('New campaign', [
+            'user' => $user->id,
+            'campaign' => $campaign->id,
+        ]);
     }
 
     /**
@@ -174,6 +179,10 @@ class CampaignObserver
      */
     public function deleted(Campaign $campaign)
     {
+        Log::info('Campaign deleted', [
+            'user' => auth()->user()->id,
+            'campaign' => $campaign->id,
+        ]);
         ImageService::cleanup($campaign);
         UserCache::clearCampaigns();
     }

@@ -20,7 +20,7 @@ class StoryController extends Controller
     use GuestAuthTrait;
 
     /** @var StoryService */
-    protected $service;
+    protected StoryService $service;
 
     /**
      * AbilityController constructor.
@@ -53,6 +53,7 @@ class StoryController extends Controller
 
         $this->service
             ->entity($entity)
+            ->user(auth()->user())
             ->reorder($request);
 
         return redirect()

@@ -6,7 +6,7 @@ use App\Models\Campaign;
 use App\Models\Quest;
 use App\Http\Requests\StoreQuest as Request;
 use App\Http\Resources\QuestResource as Resource;
-use App\Http\Resources\QuestCollection as Collection;
+use Illuminate\Support\Facades\Log;
 
 class QuestApiController extends ApiController
 {
@@ -18,6 +18,10 @@ class QuestApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'quests'
+        ]);
         return Resource::collection($campaign
             ->quests()
             ->filter(request()->all())

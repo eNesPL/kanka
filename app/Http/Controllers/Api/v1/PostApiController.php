@@ -7,6 +7,7 @@ use App\Models\Entity;
 use App\Http\Requests\StorePost as Request;
 use App\Http\Resources\PostResource as Resource;
 use App\Models\Post;
+use Illuminate\Support\Facades\Log;
 
 class PostApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class PostApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $entity->child);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'posts'
+        ]);
         return Resource::collection($entity->posts()->paginate());
     }
 

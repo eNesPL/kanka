@@ -5,11 +5,16 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Resources\CampaignResource;
 use App\Models\Campaign;
 use App\Http\Requests\StoreCampaign as Request;
+use Illuminate\Support\Facades\Log;
 
 class CampaignApiController extends ApiController
 {
     public function index(\Illuminate\Http\Request $request)
     {
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'campaigns'
+        ]);
         $campaigns = $request
             ->user()
             ->campaigns()

@@ -17,6 +17,8 @@ use App\Models\PluginVersionEntity;
 use App\Models\QuestElement;
 use App\Models\Race;
 use App\Models\Relation;
+use App\Traits\CampaignAware;
+use App\Traits\UserAware;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -26,8 +28,8 @@ use Exception;
 
 class CampaignPluginService
 {
-    /** @var Campaign */
-    protected $campaign;
+    use CampaignAware;
+    use UserAware;
 
     /** @var Plugin */
     protected $plugin;
@@ -66,16 +68,6 @@ class CampaignPluginService
     protected $skipUpdates = false;
 
     /**
-     * @param Campaign $campaign
-     * @return $this
-     */
-    public function campaign(Campaign $campaign): self
-    {
-        $this->campaign = $campaign;
-        return $this;
-    }
-
-    /**
      * @param array $options
      * @return $this
      */
@@ -106,6 +98,13 @@ class CampaignPluginService
         if ($plugin->canEnable()) {
             $plugin->is_active = true;
             $plugin->save();
+
+            Log::info('Plugin toggle', [
+                'user' => $this->user->id,
+                'campaign' => $this->campaign->id,
+                'plugin' => $this->plugin->id,
+                'enable' => true,
+            ]);
             return true;
         }
         return false;
@@ -118,6 +117,13 @@ class CampaignPluginService
         if ($plugin->canDisable()) {
             $plugin->is_active = false;
             $plugin->save();
+
+            Log::info('Plugin toggle', [
+                'user' => $this->user->id,
+                'campaign' => $this->campaign->id,
+                'plugin' => $this->plugin->id,
+                'enabled' => false,
+            ]);
             return true;
         }
         return false;
@@ -141,6 +147,11 @@ class CampaignPluginService
 
         CampaignCache::clearTheme();
 
+        Log::info('Plugin removal', [
+            'user' => $this->user->id,
+            'campaign' => $this->campaign->id,
+            'plugin' => $this->plugin->id,
+        ]);
         return true;
     }
 
@@ -176,6 +187,12 @@ class CampaignPluginService
 
         $campaignPlugin->plugin_version_id = $latest->id;
         $campaignPlugin->save();
+
+        Log::info('Plugin update', [
+            'user' => $this->user->id,
+            'campaign' => $this->campaign->id,
+            'plugin' => $this->plugin->id,
+        ]);
 
         CampaignCache::clearTheme();
         return true;
@@ -217,6 +234,11 @@ class CampaignPluginService
             $count++;
         }
 
+        Log::info('Plugin import', [
+            'user' => $this->user->id,
+            'campaign' => $this->campaign->id,
+            'plugin' => $this->plugin->id,
+        ]);
         return $count;
     }
 
@@ -354,7 +376,11 @@ class CampaignPluginService
                     } elseif ($type == 'quest_element') {
                         $this->saveQuestElement($data, $uuid, $model->id, $pluginEntity);
                     } else {
-                        Log::info('Unknown relation type \'' . $type . '\' for marketplace entity #' . $pluginEntity->id);
+                        Log::info('Marketplace content pack error', [
+                            'type' => $type,
+                            'entity' => $pluginEntity->id,
+                            'data' => 'Unknown relation type for marketplace entity',
+                        ]);
                     }
                 }
             }

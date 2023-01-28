@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Race;
 use App\Http\Requests\StoreRace as Request;
 use App\Http\Resources\RaceResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class RaceApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class RaceApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'races'
+        ]);
         return Resource::collection($campaign
             ->races()
             ->filter(request()->all())

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Campaign;
 use App\Models\CampaignFollower;
 use App\User;
+use Illuminate\Support\Facades\Log;
 
 class CampaignFollowService
 {
@@ -46,6 +47,12 @@ class CampaignFollowService
             return false;
         }
         $follow->delete();
+
+        Log::info('Stop following campaign', [
+            'user' => $user->id,
+            'campaign' => $campaign->id,
+        ]);
+
         return true;
     }
 
@@ -59,6 +66,12 @@ class CampaignFollowService
         $follow = new CampaignFollower();
         $follow->campaign_id = $campaign->id;
         $follow->user_id = $user->id;
+
+        Log::info('Start following campaign', [
+            'user' => $user->id,
+            'campaign' => $campaign->id,
+        ]);
+
         return $follow->save();
     }
 }

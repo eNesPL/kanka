@@ -16,7 +16,7 @@ class ExportController extends Controller
     /**
      * @var ExportService
      */
-    protected $service;
+    protected ExportService $service;
 
     /**
      * Create a new controller instance.

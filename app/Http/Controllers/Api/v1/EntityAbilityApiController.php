@@ -7,6 +7,7 @@ use App\Models\Entity;
 use App\Http\Requests\StoreEntityAbility as Request;
 use App\Http\Resources\EntityAbilityResource as Resource;
 use App\Models\EntityAbility;
+use Illuminate\Support\Facades\Log;
 
 class EntityAbilityApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class EntityAbilityApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $entity->child);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entity_abilities'
+        ]);
         return Resource::collection($entity->abilities()->paginate());
     }
 

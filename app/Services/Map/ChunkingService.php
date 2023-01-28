@@ -235,7 +235,7 @@ class ChunkingService
             $this->map->initial_zoom = max($this->minZoom, min($this->maxZoom, $this->map->initial_zoom));
         }
         $this->map->save();
-        Log::info('Saved map #' . $this->map->id);
+        Log::info('Saved chunking finished', ['map' => $this->map->id]);
         if ($this->map->entity->creator) {
             /** @var User $user */
             $user = $this->map->entity->creator;
@@ -246,7 +246,7 @@ class ChunkingService
                 ['name' => $this->map->name]
             ));
 
-            Log::info('Notified user #' . $this->map->entity->created_by);
+            Log::info('Notify user', ['key' => 'map.chunked', 'user' => $this->map->entity->created_by, 'map' => $this->map->id]);
         }
 
         // Cleanup the locally downloaded file

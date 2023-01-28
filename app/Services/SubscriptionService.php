@@ -250,6 +250,10 @@ class SubscriptionService
                 Arr::get($this->request, 'reason_custom')
             );
             $this->user->log(UserLog::TYPE_SUB_DOWNGRADE);
+            Log::info('Subscription downgraded', [
+                'user' => $this->user->id,
+                'pledge' => $this->user->pledge,
+            ]);
             return $this;
         }
 
@@ -260,6 +264,7 @@ class SubscriptionService
         $new = !$this->upgrading($plan);
 
         // Add the necessary roles and pledge data
+        $oldPledge = $this->user->pledge;
         $this->user->pledge = $plan;
         $this->user->update(['pledge' => $plan]);
 
@@ -275,6 +280,10 @@ class SubscriptionService
 
         // If Stripe is confirming that a sub is renewed, we don't want to do anything more
         if ($this->renewal()) {
+            Log::info('Subscription renewed', [
+                'user' => $this->user->id,
+                'tier' => $plan,
+            ]);
             return $this;
         }
 
@@ -282,6 +291,13 @@ class SubscriptionService
         if ($plan == Pledge::ELEMENTAL) {
             SubscriptionNewElementalEmailJob::dispatch($this->user, $period, $new);
         }
+
+        Log::info('Subscription ' . ($new ? 'new' : 'upgrade'), [
+            'user' => $this->user->id,
+            'pledge' => $oldPledge,
+            'tier' => $plan,
+            'period' => $period,
+        ]);
 
         // Save the new sub value
         $this->subscriptionValue =
@@ -557,10 +573,10 @@ class SubscriptionService
         // source with the charge ID, and welterbrand was our first subscriber without a charge ID, so it would
         // always trigger his subscription and cancel it incorrectly.
         if (empty($this->user) || $this->user->id == 27078) {
-            Log::info('Subscription charge failed for welterbrand');
+            //Log::info('Subscription charge failed for welterbrand');
             return true;
         }
-        Log::info('Subscription charge failed (giropay/sofort)', ['user_id' => $this->user->id]);
+        Log::info('Subscription charge failed (giropay/sofort)', ['user' => $this->user->id]);
         $source->update(['status' => 'failed']);
 
 

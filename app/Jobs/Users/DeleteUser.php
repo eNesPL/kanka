@@ -39,12 +39,12 @@ class DeleteUser implements ShouldQueue
         $user = User::find($this->user);
         if (!$user) {
             // User wasn't found
-            Log::warning('User delete: unknown #' . $this->user . '.');
+            Log::warning('Unknown user to delete', ['user' => $this->user, 'job' => true]);
         }
 
         User::observe(UserObserver::class);
         $user->delete();
 
-        Log::info('User #' . $this->user . ' deleted (job)');
+        Log::info('Delete user', ['user' => $this->user, 'job' => true]);
     }
 }

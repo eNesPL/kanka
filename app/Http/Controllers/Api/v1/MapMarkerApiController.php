@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\MapMarker;
 use App\Http\Requests\StoreMapMarker as Request;
 use App\Http\Resources\MapMarkerResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class MapMarkerApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class MapMarkerApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $map);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'map_markers'
+        ]);
         return Resource::collection($map->markers()->paginate());
     }
 

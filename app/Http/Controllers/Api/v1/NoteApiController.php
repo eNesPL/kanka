@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Note;
 use App\Http\Requests\StoreNote as Request;
 use App\Http\Resources\NoteResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class NoteApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class NoteApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'notes'
+        ]);
         return Resource::collection($campaign
             ->notes()
             ->filter(request()->all())

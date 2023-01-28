@@ -11,6 +11,7 @@ use App\Models\CampaignRole;
 use App\Models\CampaignRoleUser;
 use App\Services\Campaign\MemberService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UserApiController extends ApiController
 {
@@ -26,6 +27,11 @@ class UserApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('update', $campaign);
+
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'campaign_users'
+        ]);
 
         return UserResource::collection($campaign->users()
         ->lastSync(request()->get('lastSync'))

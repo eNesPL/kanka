@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\DiceRoll;
 use App\Http\Requests\StoreDiceRoll as Request;
 use App\Http\Resources\DiceRollResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class DiceRollApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class DiceRollApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'dice_rolls'
+        ]);
         return Resource::collection($campaign
             ->diceRolls()
             ->filter(request()->all())

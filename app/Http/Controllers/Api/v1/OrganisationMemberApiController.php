@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\OrganisationMember;
 use App\Http\Requests\StoreOrganisationMember as Request;
 use App\Http\Resources\OrganisationMemberResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class OrganisationMemberApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class OrganisationMemberApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $organisation);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'organisation_members'
+        ]);
         return Resource::collection($organisation->members()->has('character')->paginate());
     }
 

@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Creature;
 use App\Http\Requests\StoreCreature as Request;
 use App\Http\Resources\CreatureResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class CreatureApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class CreatureApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'creatures'
+        ]);
         return Resource::collection($campaign
             ->creatures()
             ->filter(request()->all())

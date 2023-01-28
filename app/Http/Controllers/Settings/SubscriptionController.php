@@ -14,8 +14,8 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Exceptions\IncompletePayment;
-use Laravel\Cashier\Subscription;
 
 class SubscriptionController extends Controller
 {
@@ -57,6 +57,12 @@ class SubscriptionController extends Controller
             }
         }
 
+        // Log that the user visited the page
+        Log::info('Subscription view', [
+            'user' => $user->id,
+            'pledge' => $user->pledge,
+        ]);
+
         return view('settings.subscription.index', compact(
             'stripeApiToken',
             'status',
@@ -81,6 +87,13 @@ class SubscriptionController extends Controller
     {
         $tier = $request->get('tier');
         $period = $request->get('period', 'monthly');
+
+        Log::info('Subscription changing', [
+            'user' => auth()->user()->id,
+            'pledge' => auth()->user()->pledge,
+            'tier' => $tier,
+            'period' => $period
+        ]);
 
         $amount = $this->subscription->user($request->user())->tier($tier)->period($period)->amount();
         $card = $request->user()->hasPaymentMethod() ? Arr::first($request->user()->paymentMethods()): null;

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreImageFocus;
 use App\Http\Requests\UpdateEntityImage;
 use App\Models\Entity;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ImageController extends Controller
 {
@@ -42,6 +43,11 @@ class ImageController extends Controller
         $entity->focus_y = (int) $request->post('focus_y');
         $entity->save();
 
+        $context = ['entity' => $entity->id];
+        if (!$request->filled(['focus_x', 'focus_y'])) {
+            $context['reset'] = true;
+        }
+        Log::info('Entity image focus', $context);
 
         return redirect()
             ->to($entity->url())

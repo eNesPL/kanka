@@ -2,6 +2,9 @@
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Monolog\Handler\ElasticsearchHandler;
+use Monolog\Formatter\ElasticsearchFormatter;
+use Elastic\Elasticsearch\ClientBuilder;
 
 return [
 
@@ -36,7 +39,13 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['single']
+        ],
+
+        'full' => [
+            'driver' => 'stack',
+            'channels' => ['daily', 'elasticsearch'],
+            'ignore_exceptions' => false,
         ],
 
         'single' => [
@@ -86,6 +95,20 @@ return [
         'errorlog' => [
             'driver' => 'errorlog',
             'level' => 'debug',
+        ],
+
+        'elasticsearch' => [
+            'driver'         => 'monolog',
+            'level'          => 'debug',
+            'handler'        => ElasticsearchHandler::class,
+            'formatter'      => ElasticsearchFormatter::class,
+            'formatter_with' => [
+                'index' => env('ELASTIC_LOGS_INDEX'),
+                'type'  => '_doc',
+            ],
+            'handler_with'   => [
+                'client' => ClientBuilder::create()->setHosts([env('ELASTIC_HOST')])->build(),
+            ],
         ],
     ],
 ];

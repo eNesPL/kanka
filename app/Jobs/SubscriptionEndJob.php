@@ -55,8 +55,11 @@ class SubscriptionEndJob implements ShouldQueue
 
         // Cleanup the campaign boosts
         $boostService = app()->make('App\Services\CampaignBoostService');
-        foreach ($user->boosts()->with('campaign')->get() as $boost) {
-            $boostService->campaign($boost->campaign)->unboost($boost);
+        foreach ($user->boosts()->with('campaign')->groupBy('campaign_id')->get() as $boost) {
+            $boostService
+                ->user($user)
+                ->campaign($boost->campaign)
+                ->unboost($boost, false);
         }
 
         // Cleanup the subscriber role

@@ -5,32 +5,23 @@ namespace App\Services;
 use App\Exceptions\Campaign\AlreadyBoostedException;
 use App\Exceptions\Campaign\ExhaustedBoostsException;
 use App\Exceptions\Campaign\ExhaustedSuperboostsException;
-use App\Facades\UserCache;
-use App\Models\Campaign;
 use App\Models\CampaignBoost;
+use App\Traits\CampaignAware;
+use App\Traits\UserAware;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CampaignBoostService
 {
-    /** @var Campaign */
-    protected $campaign;
+    use CampaignAware;
+    use UserAware;
 
     /** @var string */
     protected $action;
 
     /** @var bool If updating an existing boost to a superboost */
     protected $upgrade = false;
-
-    /**
-     * @param Campaign $campaign
-     * @return $this
-     */
-    public function campaign(Campaign $campaign): self
-    {
-        $this->campaign = $campaign;
-        return $this;
-    }
 
     /**
      * @param string $action
@@ -56,21 +47,17 @@ class CampaignBoostService
      * @throws AlreadyBoostedException
      * @throws ExhaustedBoostsException
      */
-    public function boost(User $user = null): void
+    public function boost(): void
     {
         if ($this->campaign->boosted() && !$this->upgrade) {
             throw new AlreadyBoostedException($this->campaign);
         }
 
-        if ($user === null) {
-            $user = Auth::user();
-        }
-
-        if ($user->availableBoosts() === 0) {
+        if ($this->user->availableBoosts() === 0) {
             throw new ExhaustedBoostsException();
         }
 
-        if ($this->action == 'superboost' && $user->availableBoosts() < ($this->upgrade ? 2 : 3)) {
+        if ($this->action == 'superboost' && $this->user->availableBoosts() < ($this->upgrade ? 2 : 3)) {
             throw new ExhaustedSuperboostsException();
         }
 
@@ -86,34 +73,45 @@ class CampaignBoostService
         for ($i = 0; $i < $amount; $i++) {
             CampaignBoost::create([
                 'campaign_id' => $this->campaign->id,
-                'user_id' => $user->id
+                'user_id' => $this->user->id
             ]);
         }
         $this->campaign->boost_count = $this->campaign->boosts()->count();
         $this->campaign->withObservers = false;
         $this->campaign->save();
+
+        Log::info('Boost campaign', [
+            'user' => $this->user->id,
+            'amount' => $amount,
+            'campaign' => $this->campaign->id,
+            'upgrade' => $this->upgrade,
+        ]);
     }
 
     /**
      * Unboost a campaign
-     * @param CampaignBoost $campaignBoost
-     * @return $this
-     * @throws \Exception
      */
-    public function unboost(CampaignBoost $campaignBoost): self
+    public function unboost(CampaignBoost $campaignBoost, bool $manual = true): self
     {
         $campaignBoost->delete();
 
         // Delete other boosts on the same campaign if the user is superboosting
-        if (auth()->check()) {
-            foreach (auth()->user()->boosts()->where('campaign_id', $campaignBoost->campaign_id)->get() as $boost) {
-                $boost->delete();
-            }
+        $boosts = $this->user->boosts()->where('campaign_id', $campaignBoost->campaign_id)->get();
+        foreach ($boosts as $boost) {
+            $boost->delete();
         }
 
+        $oldAmount = $this->campaign->boost_count;
         $this->campaign->boost_count = $this->campaign->boosts()->count();
-        $this->campaign->withObservers = false;
-        $this->campaign->save();
+        $this->campaign->saveQuietly();
+
+        Log::info('Unboost campaign', [
+            'user' => $this->user->id,
+            'campaign' => $this->campaign->id,
+            'amount' => $oldAmount,
+            'manual' => $manual,
+            'days' => $campaignBoost->created_at->diffInDays(),
+        ]);
 
         return $this;
     }

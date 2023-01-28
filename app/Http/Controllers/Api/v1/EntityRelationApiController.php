@@ -7,6 +7,7 @@ use App\Models\Entity;
 use App\Http\Requests\StoreRelation as Request;
 use App\Http\Resources\RelationResource as Resource;
 use App\Models\Relation;
+use Illuminate\Support\Facades\Log;
 
 class EntityRelationApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class EntityRelationApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $entity->child);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entity_relationsw'
+        ]);
         return Resource::collection($entity->relationships()->has('target')->paginate());
     }
 

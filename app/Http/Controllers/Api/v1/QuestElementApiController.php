@@ -8,6 +8,7 @@ use App\Models\QuestElement;
 use App\Http\Requests\StoreQuestElement as RequestElement;
 use App\Http\Resources\QuestElementResource as Resource;
 use App\Http\Resources\QuestElementCollection as Collection;
+use Illuminate\Support\Facades\Log;
 
 class QuestElementApiController extends ApiController
 {
@@ -20,6 +21,10 @@ class QuestElementApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $quest);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'quest_elements'
+        ]);
         return Resource::collection($quest->elements()->paginate());
     }
 

@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use LogicException;
 
 class CrudController extends Controller
@@ -281,6 +282,12 @@ class CrudController extends Controller
                     e($new->name),
                     [$new->id]
                 )
+            ]);
+
+            Log::info('Create entity', [
+                'user' => auth()->user()->id,
+                'entity' => $new->entity->id,
+                'type' => $new->entity->type(),
             ]);
 
             session()->flash('success_raw', $success);

@@ -11,6 +11,7 @@ use App\Models\Tag;
 use App\Models\Post;
 use App\Services\EntityService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class EntityCreatorController extends Controller
@@ -132,6 +133,14 @@ class EntityCreatorController extends Controller
                     $tag->saveImageObserver = false;
                     $tag->save();
                     $tags[$number] = strval($tag->id);
+
+                    Log::info('Create entity', [
+                        'user' => auth()->user()->id,
+                        'entity' => $tag->entity->id,
+                        'type' => $tag->entity->type(),
+                        'qq' => true,
+                        'dynamic' => true
+                    ]);
                 } elseif (empty($tag) && !$canCreateTags) {
                     unset($tags[$number]);
                 }
@@ -156,6 +165,14 @@ class EntityCreatorController extends Controller
                 $new = $model->create($values);
                 $new->crudSaved();
                 $new->entity->crudSaved();
+
+                Log::info('Create entity', [
+                    'user' => auth()->user()->id,
+                    'entity' => $new->entity->id,
+                    'type' => $new->entity->type(),
+                    'qq' => true,
+                    '_target' => $request->get('_target')
+                ]);
             } else {
                 //If position = 0 the post's position is last, else the post's position is first.
                 $this->validateEntity($values, $validator->rules());

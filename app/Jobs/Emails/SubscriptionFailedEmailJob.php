@@ -43,7 +43,7 @@ class SubscriptionFailedEmailJob implements ShouldQueue
         // User deleted their account already? Sure thing
         $user = User::find($this->userId);
         if (empty($user)) {
-            Log::warning('Subscription Failed Email Job: unknown user id', ['userId' => $this->userId]);
+            Log::warning('Subscription Failed Email Job: unknown user id', ['user' => $this->userId]);
             return;
         }
 
@@ -65,6 +65,11 @@ class SubscriptionFailedEmailJob implements ShouldQueue
             ->send(
                 new FailedUserSubscriptionMail($user)
             );
-        $user->log(UserLog::TYPE_FAILED_CHARGE_EMAIL);
+
+        //$user->log(UserLog::TYPE_FAILED_CHARGE_EMAIL);
+        Log::info('Subscription failed', [
+            'user' => $this->userId,
+            'pledge' => $user->pledge,
+        ]);
     }
 }

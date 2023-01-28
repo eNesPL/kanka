@@ -9,6 +9,7 @@ use App\Models\Entity;
 use App\Models\MiscModel;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EntityImageApiController extends Controller
 {
@@ -17,6 +18,10 @@ class EntityImageApiController extends Controller
         $this->authorize('access', $campaign);
         $this->authorize('update', $entity->child);
 
+        Log::info('API', [
+            'action' => 'put',
+            'endpoint' => 'entity_images'
+        ]);
         /** @var MiscModel $child */
         $child = $entity->child;
 
@@ -44,6 +49,11 @@ class EntityImageApiController extends Controller
     {
         $this->authorize('access', $campaign);
         $this->authorize('update', $entity->child);
+
+        Log::info('API', [
+            'action' => 'destroy',
+            'endpoint' => 'entity_images'
+        ]);
 
         /** @var MiscModel $child */
         $child = $entity->child;

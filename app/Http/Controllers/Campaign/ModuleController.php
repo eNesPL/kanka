@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Campaign;
 
 use App\Facades\CampaignLocalization;
-use App\Models\Campaign;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
-class CampaignSettingController extends Controller
+class ModuleController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -50,6 +50,13 @@ class CampaignSettingController extends Controller
         $campaign->setting->{$module} = !$campaign->setting->{$module};
         $campaign->setting->save();
         $action = $campaign->setting->{$module} ? 'enabled' : 'disabled';
+
+        Log::info('Campaign module', [
+            'user' => auth()->user()->id,
+            'campaign' => $campaign->id,
+            'module' => $module,
+            'action' => $action,
+        ]);
 
         return response()->json([
             'success' => true,

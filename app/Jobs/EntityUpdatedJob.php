@@ -45,7 +45,7 @@ class EntityUpdatedJob implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('EntityUpdateJob for entity #' . $this->entityId);
+        //Log::info('EntityUpdateJob for entity #' . $this->entityId);
         /** @var Entity|null $entity */
         $entity = Entity::find($this->entityId);
         if (empty($entity) || empty($entity->child)) {

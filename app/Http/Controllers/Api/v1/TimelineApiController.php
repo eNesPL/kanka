@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Timeline;
 use App\Http\Requests\StoreTimeline as Request;
 use App\Http\Resources\TimelineResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class TimelineApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class TimelineApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'timelines'
+        ]);
         return Resource::collection($campaign
             ->timelines()
             ->filter(request()->all())

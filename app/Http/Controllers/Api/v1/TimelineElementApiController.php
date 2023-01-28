@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\TimelineElement;
 use App\Http\Requests\StoreTimelineElement as Request;
 use App\Http\Resources\TimelineElementResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class TimelineElementApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class TimelineElementApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $timeline);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'timeline_elements'
+        ]);
         return Resource::collection($timeline->elements()->paginate());
     }
 

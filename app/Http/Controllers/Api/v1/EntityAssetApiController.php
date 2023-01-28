@@ -7,6 +7,7 @@ use App\Models\Entity;
 use App\Http\Requests\StoreEntityAsset as Request;
 use App\Http\Resources\AssetResource as Resource;
 use App\Models\EntityAsset;
+use Illuminate\Support\Facades\Log;
 
 class EntityAssetApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class EntityAssetApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $entity->child);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entity_assets'
+        ]);
         return Resource::collection($entity->assets()->paginate());
     }
 

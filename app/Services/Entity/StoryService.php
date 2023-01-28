@@ -5,21 +5,14 @@ namespace App\Services\Entity;
 use App\Http\Requests\ReorderStories;
 use App\Models\Entity;
 use App\Models\EntityNote;
+use App\Traits\EntityAware;
+use App\Traits\UserAware;
+use Illuminate\Support\Facades\Log;
 
 class StoryService
 {
-    /** @var Entity */
-    protected $entity;
-
-    /**
-     * @param Entity $entity
-     * @return $this
-     */
-    public function entity(Entity $entity): self
-    {
-        $this->entity = $entity;
-        return $this;
-    }
+    use UserAware;
+    use EntityAware;
 
     /**
      * @param ReorderStories $request
@@ -69,12 +62,18 @@ class StoryService
             }
 
             $story->position = $position;
-            $story->savingObserver = false;
-            $story->savedObserver = false;
-            $story->save();
+            /*$story->savingObserver = false;
+            $story->savedObserver = false;*/
+            $story->saveQuietly();
             $position++;
         }
 
+        Log::info('Reorder posts', [
+            'user' => $this->user->id,
+            'entity' => $this->entity->id,
+        ]);
+
+        //$this->entity->touchQuietly();
         return true;
     }
 }

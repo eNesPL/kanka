@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Event;
 use App\Http\Requests\StoreEvent as Request;
 use App\Http\Resources\EventResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class EventApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class EventApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'events'
+        ]);
         return Resource::collection($campaign
             ->events()
             ->filter(request()->all())

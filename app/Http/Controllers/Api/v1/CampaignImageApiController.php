@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\Image;
 use App\Http\Requests\Campaigns\GalleryImageStore as Request;
 use App\Http\Resources\ImageResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class CampaignImageApiController extends ApiController
 {
@@ -23,6 +24,10 @@ class CampaignImageApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'campaign_images'
+        ]);
         return Resource::collection($campaign
             ->images()
             ->where('is_default', false)

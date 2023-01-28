@@ -13,6 +13,7 @@ use App\Services\AttributeService;
 use App\Services\ImageService;
 use App\Services\PermissionService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class EntityObserver
@@ -22,20 +23,9 @@ class EntityObserver
      */
     use PurifiableTrait;
 
-    /**
-     * @var PermissionService
-     */
-    protected $permissionService;
+    protected PermissionService $permissionService;
 
-    /**
-     * @var AttributeService
-     */
-    protected $attributeService;
-
-    /**
-     * @var bool
-     */
-    protected $permissionGrantSelf = false;
+    protected AttributeService $attributeService;
 
     /**
      * PermissionController constructor.
@@ -284,8 +274,21 @@ class EntityObserver
     {
         // If soft deleting, don't really delete the image
         if ($entity->trashed()) {
+            Log::info('Delete entity', [
+                'user' => auth()->user()->id,
+                'type' => $entity->type(),
+                'entity' => $entity->id,
+                'permanent' => false
+            ]);
             return;
         }
+
+        Log::info('Delete entity', [
+            'user' => auth()->user()->id,
+            'type' => $entity->type_id,
+            'entity' => $entity->id,
+            'permanent' => true
+        ]);
 
         $entity->permissions()->delete();
         $entity->widgets()->delete();

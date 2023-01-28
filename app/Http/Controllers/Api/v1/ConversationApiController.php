@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Conversation;
 use App\Http\Requests\StoreConversation as Request;
 use App\Http\Resources\ConversationResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class ConversationApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class ConversationApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'conversations'
+        ]);
         return Resource::collection($campaign
             ->conversations()
             ->filter(request()->all())

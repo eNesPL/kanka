@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\MapGroup;
 use App\Http\Requests\StoreMapGroup as Request;
 use App\Http\Resources\MapGroupResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class MapGroupApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class MapGroupApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $map);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'map_groups'
+        ]);
         return Resource::collection($map->groups()->paginate());
     }
 

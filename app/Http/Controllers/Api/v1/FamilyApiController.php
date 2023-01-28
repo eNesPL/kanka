@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Family;
 use App\Http\Requests\StoreFamily as Request;
 use App\Http\Resources\FamilyResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class FamilyApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class FamilyApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'family'
+        ]);
         return Resource::collection($campaign
             ->families()
             ->filter(request()->all())

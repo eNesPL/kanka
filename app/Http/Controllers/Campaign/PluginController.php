@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Campaign;
-
 
 use App\Facades\CampaignCache;
 use App\Facades\CampaignLocalization;
@@ -17,7 +15,7 @@ use Illuminate\Http\Request;
 class PluginController extends Controller
 {
     /** @var CampaignPluginService */
-    protected $service;
+    protected CampaignPluginService $service;
 
     public function __construct(CampaignPluginService $service)
     {
@@ -81,7 +79,11 @@ class PluginController extends Controller
         $campaign = CampaignLocalization::getCampaign();
         $this->authorize('recover', $campaign);
 
-        $this->service->campaign($campaign)->plugin($plugin)->enable();
+        $this->service
+            ->campaign($campaign)
+            ->user(auth()->user())
+            ->plugin($plugin)
+            ->enable();
 
         return redirect()->route('campaign_plugins.index')
             ->with(
@@ -100,7 +102,11 @@ class PluginController extends Controller
         $campaign = CampaignLocalization::getCampaign();
         $this->authorize('recover', $campaign);
 
-        $this->service->campaign($campaign)->plugin($plugin)->disable();
+        $this->service
+            ->campaign($campaign)
+            ->user(auth()->user())
+            ->plugin($plugin)
+            ->disable();
 
         return redirect()->route('campaign_plugins.index')
             ->with(
@@ -122,7 +128,11 @@ class PluginController extends Controller
         $this->authorize('recover', $campaign);
 
         try {
-            $this->service->campaign($campaign)->plugin($plugin)->remove();
+            $this->service
+                ->campaign($campaign)
+                ->user(auth()->user())
+                ->plugin($plugin)
+                ->remove();
 
             return redirect()->route('campaign_plugins.index')
                 ->with(
@@ -188,7 +198,11 @@ class PluginController extends Controller
         $campaign = CampaignLocalization::getCampaign();
         $this->authorize('recover', $campaign);
 
-        $this->service->plugin($plugin)->campaign($campaign)->update();
+        $this->service
+            ->plugin($plugin)
+            ->user(auth()->user())
+            ->campaign($campaign)
+            ->update();
         return redirect()->route('campaign_plugins.index')
             ->with(
                 'success',
@@ -226,6 +240,7 @@ class PluginController extends Controller
             $count = $this->service
                 ->plugin($plugin)
                 ->campaign($campaign)
+                ->user(auth()->user())
                 ->options($request->only(['force_private', 'only_new']))
                 ->import();
 

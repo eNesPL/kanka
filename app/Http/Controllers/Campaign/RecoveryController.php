@@ -67,12 +67,11 @@ class RecoveryController extends Controller
             ;
         }
         try {
-            $count = $this->service->recover($request->get('model', []));
+            $count = $this->service->user(auth()->user())->recover($request->get('model', []));
             return redirect()
                 ->route('recovery')
                 ->with('success', trans_choice('campaigns/recovery.success', $count, ['count' => $count]));
         } catch (\Exception $e) {
-
             return redirect()
                 ->route('recovery')
                 ->with('error', __('campaigns/recovery.error'));

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\Layout\NavigationService;
 use App\User;
+use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
@@ -42,6 +43,10 @@ class NotificationController extends Controller
             abort(403);
         }
 
+        Log::info('Notification read', [
+            'user' => auth()->user()->id,
+            'notification' => $notification->data['key'],
+        ]);
         $notification->markAsRead();
         return response()->json(['success' => true]);
     }

@@ -12,6 +12,7 @@ use App\Models\UserLog;
 use App\Services\ImageService;
 use App\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
@@ -84,13 +85,21 @@ class UserObserver
         WelcomeEmailJob::dispatch($user, app()->getLocale());
         session()->put('user_registered', true);
 
-        if (request()->filled('newsletter')) {
+        $newsletter = request()->filled('newsletter');
+        if ($newsletter) {
             $user
                 ->updateSettings(['mail_release' => 1])
                 ->save();
 
             MailSettingsChangeJob::dispatch($user);
         }
+
+
+        Log::info('New user', [
+            'user' => $user->id,
+            'provider' => $user->provider,
+            'newsletter' => $newsletter
+        ]);
     }
 
     /**
@@ -108,6 +117,8 @@ class UserObserver
             ->clearCampaigns()
             ->clearRoles()
         ;
+
+        Log::info('Delete user', ['user' => $user->id]);
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Map;
 use App\Http\Requests\StoreMap as Request;
 use App\Http\Resources\MapResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class MapApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class MapApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'maps'
+        ]);
         return Resource::collection($campaign
             ->maps()
             ->filter(request()->all())

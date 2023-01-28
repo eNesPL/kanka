@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\MapLayer;
 use App\Http\Requests\StoreMapLayer as Request;
 use App\Http\Resources\MapLayerResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class MapLayerApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class MapLayerApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $map);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'map_layers'
+        ]);
         return Resource::collection($map->layers()->paginate());
     }
 

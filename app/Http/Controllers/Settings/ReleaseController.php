@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ReadBanner;
 use App\Models\AppRelease;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Stevebauman\Purify\Facades\Purify;
 
 class ReleaseController extends Controller
@@ -34,6 +35,12 @@ class ReleaseController extends Controller
         $user->settings = $settings;
         $user->save();
 
+        Log::info('Release read', [
+            'user' => $user->id,
+            'release' => $appRelease->id,
+            'category' => $appRelease->category_id
+        ]);
+
         return response()->json([
             'success' => true
         ]);
@@ -59,6 +66,12 @@ class ReleaseController extends Controller
         $settings->put($section . $code, true);
         $user->settings = $settings;
         $user->save();
+
+        Log::info('Banner read', [
+            'user' => $user->id,
+            'section' => $section,
+            'code' => $code,
+        ]);
 
         return response()->json([
             'success' => true

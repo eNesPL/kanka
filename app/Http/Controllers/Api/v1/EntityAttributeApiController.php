@@ -7,6 +7,7 @@ use App\Models\Entity;
 use App\Http\Requests\StoreAttribute as Request;
 use App\Http\Resources\AttributeResource as Resource;
 use App\Models\Attribute;
+use Illuminate\Support\Facades\Log;
 
 class EntityAttributeApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class EntityAttributeApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $entity->child);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entity_attributes'
+        ]);
         return Resource::collection($entity->attributes);
     }
 

@@ -8,6 +8,7 @@ use App\Models\Campaign;
 use App\Models\Entity;
 use App\Services\EntityService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EntityTemplateApiController extends ApiController
 {
@@ -34,6 +35,10 @@ class EntityTemplateApiController extends ApiController
             DB::enableQueryLog();
         }
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entity_templates'
+        ]);
         return Resource::collection($campaign->entities()
             ->apiFilter(request()->all())
             ->lastSync(request()->get('lastSync'))

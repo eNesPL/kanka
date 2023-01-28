@@ -63,6 +63,7 @@ class CampaignBoostController extends Controller
         try {
             $this->campaignBoostService
                 ->campaign($campaign)
+                ->user(auth()->user())
                 ->action($request->post('action'))
                 ->boost();
 
@@ -127,6 +128,7 @@ class CampaignBoostController extends Controller
         try {
             $this->campaignBoostService
                 ->campaign($campaign)
+                ->user(auth()->user())
                 ->upgrade()
                 ->boost();
 
@@ -176,7 +178,10 @@ class CampaignBoostController extends Controller
     {
         $this->authorize('destroy', $campaignBoost);
 
-        $this->campaignBoostService->campaign($campaignBoost->campaign)->unboost($campaignBoost);
+        $this->campaignBoostService
+            ->campaign($campaignBoost->campaign)
+            ->user(auth()->user())
+            ->unboost($campaignBoost);
 
         $this->campaignService->notify(
             $campaignBoost->campaign,

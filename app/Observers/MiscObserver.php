@@ -6,8 +6,6 @@ use App\Facades\CampaignLocalization;
 use App\Facades\EntityCache;
 use App\Facades\Identity;
 use App\Facades\Mentions;
-use App\Models\Character;
-use App\Models\Concerns\Nested;
 use App\Models\Conversation;
 use App\Models\Entity;
 use App\Models\EntityLog;
@@ -15,7 +13,6 @@ use App\Models\Location;
 use App\Models\MiscModel;
 use App\Services\EntityMappingService;
 use App\Services\ImageService;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 abstract class MiscObserver
@@ -170,7 +167,7 @@ abstract class MiscObserver
     }
 
     /**
-     * @param MiscModel|Character $model
+     * Delete the entity (soft deleted in most cases)
      */
     public function deleted(MiscModel $model)
     {

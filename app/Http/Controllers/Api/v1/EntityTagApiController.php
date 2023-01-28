@@ -7,6 +7,7 @@ use App\Models\Entity;
 use App\Http\Requests\StoreEntityTag as Request;
 use App\Http\Resources\EntityTagResource as Resource;
 use App\Models\EntityTag;
+use Illuminate\Support\Facades\Log;
 
 class EntityTagApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class EntityTagApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $entity->child);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entity_tags'
+        ]);
         return Resource::collection($entity->entityTags()->paginate());
     }
 

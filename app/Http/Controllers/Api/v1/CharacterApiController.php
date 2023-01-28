@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Character;
 use App\Http\Requests\StoreCharacter as Request;
 use App\Http\Resources\CharacterResource;
+use Illuminate\Support\Facades\Log;
 
 class CharacterApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class CharacterApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'characters'
+        ]);
         return CharacterResource::collection($campaign
             ->characters()
             ->withApi()

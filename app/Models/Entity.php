@@ -105,12 +105,6 @@ class Entity extends Model
         'crudSaved',
     ];
 
-    /**
-     * True if the user granted themselves permission to read/write when creating the entity
-     * @var bool
-     */
-    public $permissionGrantSelf = false;
-
     /** @var bool|string */
     protected $cachedPluralName = false;
 
@@ -255,11 +249,11 @@ class Entity extends Model
     }
 
     /**
-     * @return string
+     * Get the entity type's singular name
      */
-    public function type(): string
+    public function type(bool $fromCache = true): string
     {
-        if ($this->cachedType !== false) {
+        if ($fromCache && $this->cachedType !== false) {
             return $this->cachedType;
         }
         $type = array_search($this->type_id, config('entities.ids'));

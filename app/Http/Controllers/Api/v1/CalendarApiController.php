@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Calendar;
 use App\Http\Requests\StoreCalendar as Request;
 use App\Http\Resources\CalendarResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class CalendarApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class CalendarApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'calendars'
+        ]);
         return Resource::collection($campaign
             ->calendars()
             ->filter(request()->all())

@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\ConversationParticipant;
 use App\Http\Requests\StoreConversationParticipant as RequestParticipant;
 use App\Http\Resources\ConversationParticipantResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class ConversationParticipantApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class ConversationParticipantApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $conversation);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'conversation_participants'
+        ]);
         return Resource::collection($conversation->participants()->paginate());
     }
 

@@ -646,8 +646,13 @@ class SidebarService
      */
     public function availableParents(): array
     {
-        $labels = [];
+        $labels = [
+            null => __('entities/links.defaults.parent')
+        ];
         foreach ($this->elements as $key => $element) {
+            if ($key === 'menu_links') {
+                continue;
+            }
             $labels[$key] = __($element['label']);
         }
         return $labels;

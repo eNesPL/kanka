@@ -7,6 +7,7 @@ use App\Models\Organisation;
 use App\Http\Requests\StoreOrganisation as Request;
 use App\Http\Resources\OrganisationResource as Resource;
 use App\Http\Resources\OrganisationCollection as Collection;
+use Illuminate\Support\Facades\Log;
 
 class OrganisationApiController extends ApiController
 {
@@ -18,6 +19,10 @@ class OrganisationApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'organisations'
+        ]);
         return Resource::collection($campaign
             ->organisations()
             ->filter(request()->all())

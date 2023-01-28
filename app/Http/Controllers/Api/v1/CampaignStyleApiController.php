@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\CampaignStyle;
 use App\Http\Requests\StoreCampaignStyle as Request;
 use App\Http\Resources\CampaignStyleResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class CampaignStyleApiController extends ApiController
 {
@@ -22,6 +23,10 @@ class CampaignStyleApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'campaign_styles'
+        ]);
         return Resource::collection($campaign
             ->styles()
             ->paginate()

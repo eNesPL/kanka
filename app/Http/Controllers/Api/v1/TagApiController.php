@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Tag;
 use App\Http\Requests\StoreTag as Request;
 use App\Http\Resources\TagResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class TagApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class TagApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'tags'
+        ]);
         return Resource::collection($campaign
             ->tags()
             ->filter(request()->all())

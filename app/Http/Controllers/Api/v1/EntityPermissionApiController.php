@@ -10,6 +10,7 @@ use App\Http\Requests\PermissionTestRequest;
 use App\Http\Resources\EntityPermissionResource as Resource;
 use App\Models\CampaignPermission;
 use App\Services\Api\ApiPermissionService;
+use Illuminate\Support\Facades\Log;
 
 class EntityPermissionApiController extends ApiController
 {
@@ -35,6 +36,10 @@ class EntityPermissionApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $entity->child);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entity_permissions'
+        ]);
         return Resource::collection($entity->permissions);
     }
 

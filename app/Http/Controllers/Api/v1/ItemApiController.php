@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Item;
 use App\Http\Requests\StoreItem as Request;
 use App\Http\Resources\ItemResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class ItemApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class ItemApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'items'
+        ]);
         return Resource::collection($campaign
             ->items()
             ->filter(request()->all())

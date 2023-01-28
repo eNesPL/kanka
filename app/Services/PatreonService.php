@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\Pledge;
+use App\Traits\UserAware;
 use App\User;
 use App\Models\Role;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class PatreonService
@@ -12,21 +14,7 @@ use App\Models\Role;
  */
 class PatreonService
 {
-    /**
-     * @var User
-     */
-    protected User $user;
-
-    /**
-     * Set the user
-     * @param User $user
-     * @return $this
-     */
-    public function user(User $user)
-    {
-        $this->user = $user;
-        return $this;
-    }
+    use UserAware;
 
     /**
      * @return mixed
@@ -58,11 +46,22 @@ class PatreonService
         if (empty($settings)) {
             $settings = null;
         }
+        $previousPledge = $this->user->pledge;
         $this->user->pledge = null;
         $this->user->settings = $settings;
         $this->user->save();
 
+        $this->log($previousPledge);
+
         return true;
+    }
+
+    protected function log(?string $previousPledge): void
+    {
+        Log::info('Patreon unlink', [
+            'user' => $this->user->id,
+            'tier' => $previousPledge
+        ]);
     }
 
 

@@ -13,6 +13,7 @@ use App\Models\UserLog;
 use App\Notifications\Header;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Exception;
 
@@ -154,7 +155,7 @@ class InviteService
             )
         );
 
-        $this->user->log(UserLog::TYPE_CAMPAIGN_JOIN);
+        Log::info('Join campaign', ['user' => $this->user->id, 'campaign' => $campaign->id]);
 
         // Make sure the user's cache is cleared
         UserCache::clearCampaigns();

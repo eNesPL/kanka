@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Location;
 use App\Http\Requests\StoreLocation as Request;
 use App\Http\Resources\LocationResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class LocationApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class LocationApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'locations'
+        ]);
         return Resource::collection($campaign
             ->locations()
             ->filter(request()->all())

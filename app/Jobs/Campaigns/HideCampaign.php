@@ -39,13 +39,13 @@ class HideCampaign implements ShouldQueue
         $campaign = Campaign::find($this->campaign);
         if (!$campaign) {
             // Campaign wasn't found
-            Log::warning('Hide Campaign: unknown #' . $this->campaign . '.');
+            Log::warning('Hide campaign unknown', ['campaign' => $this->campaign]);
         }
 
         //Campaign::observe(CampaignObserver::class);
 
         $service->hidden($campaign);
 
-        Log::info('Campaign #' . $this->campaign . ' hidden (job)');
+        Log::info('Hide campaign', ['campaign' => $this->campaign]);
     }
 }

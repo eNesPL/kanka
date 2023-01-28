@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\CampaignDashboardWidget;
 use App\Http\Requests\StoreCampaignDashboardWidget as Request;
 use App\Http\Resources\CampaignDashboardWidgetResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class CampaignDashboardWidgetApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class CampaignDashboardWidgetApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'campaign_dashboard_widgets'
+        ]);
         return Resource::collection($campaign->widgets()
             ->lastSync(request()->get('lastSync'))
             ->paginate()

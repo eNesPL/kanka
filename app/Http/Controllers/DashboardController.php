@@ -7,6 +7,7 @@ use App\Facades\Dashboard;
 use App\Facades\DataLayer;
 use App\Models\CampaignDashboardWidget;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {

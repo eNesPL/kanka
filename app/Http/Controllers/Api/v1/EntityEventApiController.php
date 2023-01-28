@@ -7,6 +7,7 @@ use App\Models\Entity;
 use App\Http\Requests\AddCalendarEvent as Request;
 use App\Http\Resources\EntityEventResource as Resource;
 use App\Models\EntityEvent;
+use Illuminate\Support\Facades\Log;
 
 class EntityEventApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class EntityEventApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $entity->child);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entity_reminders'
+        ]);
         return Resource::collection($entity->events()->paginate());
     }
 

@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Entity;
 use App\Http\Resources\EntityResource as Resource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EntityApiController extends ApiController
 {
@@ -20,6 +21,10 @@ class EntityApiController extends ApiController
             DB::enableQueryLog();
         }
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entities'
+        ]);
         return Resource::collection($campaign->entities()
             ->apiFilter(request()->all())
             ->lastSync(request()->get('lastSync'))

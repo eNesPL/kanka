@@ -7,6 +7,7 @@ use App\Models\Entity;
 use App\Http\Requests\StoreInventory as Request;
 use App\Http\Resources\InventoryResource as Resource;
 use App\Models\Inventory;
+use Illuminate\Support\Facades\Log;
 
 class EntityInventoryApiController extends ApiController
 {
@@ -20,6 +21,10 @@ class EntityInventoryApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $entity->child);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'entity_inventories'
+        ]);
         return Resource::collection($entity->inventories()->paginate());
     }
 

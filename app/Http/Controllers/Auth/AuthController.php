@@ -7,6 +7,7 @@ use App\Services\ReferralService;
 use App\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -124,6 +125,10 @@ class AuthController extends Controller
      */
     public function logout()
     {
+        Log::info('Logout', [
+            'user' => auth()->user()->id,
+        ]);
+
         auth()->logout();
 
         // We also need to flush the session (campaign_id and other things) since this could cause
@@ -134,7 +139,7 @@ class AuthController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     * Allow login in as a user
      */
     public function loginAsUser(User $user)
     {

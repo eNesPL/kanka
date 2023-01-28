@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\ConversationMessage;
 use App\Http\Requests\StoreConversationMessage as RequestMessage;
 use App\Http\Resources\ConversationMessageResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class ConversationMessageApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class ConversationMessageApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $conversation);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'conversation_messages'
+        ]);
         return Resource::collection(
             $conversation
                 ->messages()

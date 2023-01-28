@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\MenuLink;
 use App\Http\Requests\StoreMenuLink as Request;
 use App\Http\Resources\MenuLinkResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class MenuLinkApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class MenuLinkApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'menu_links'
+        ]);
         return Resource::collection($campaign
             ->menuLinks()
             ->lastSync(request()->get('lastSync'))

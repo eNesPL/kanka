@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\TimelineEra;
 use App\Http\Requests\StoreTimelineEra as Request;
 use App\Http\Resources\TimelineEraResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class TimelineEraApiController extends ApiController
 {
@@ -19,6 +20,10 @@ class TimelineEraApiController extends ApiController
     {
         $this->authorize('access', $campaign);
         $this->authorize('view', $timeline);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'timeline_eras'
+        ]);
         return Resource::collection($timeline->eras()->paginate());
     }
 

@@ -6,6 +6,7 @@ use App\Jobs\CampaignAssetExport;
 use App\Jobs\CampaignExport;
 use App\Traits\CampaignAware;
 use App\Traits\UserAware;
+use Illuminate\Support\Facades\Log;
 
 class ExportService
 {
@@ -25,6 +26,10 @@ class ExportService
         CampaignExport::dispatch($this->campaign, $this->user);
         CampaignAssetExport::dispatch($this->campaign, $this->user);
 
+        Log::info('Campaign export', [
+            'user' => $this->user->id,
+            'campaign' => $this->campaign->id,
+        ]);
         return $this;
     }
 }

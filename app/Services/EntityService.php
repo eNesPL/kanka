@@ -7,7 +7,6 @@ use App\Models\Campaign;
 use App\Models\CampaignPermission;
 use App\Models\Character;
 use App\Models\CharacterTrait;
-use App\Models\Conversation;
 use App\Models\Creature;
 use App\Models\Entity;
 use App\Models\EntityNote;
@@ -25,9 +24,11 @@ use App\Models\Race;
 use App\Models\Tag;
 use App\Models\Timeline;
 use App\Models\TimelineEra;
+use App\Traits\CampaignAware;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Exceptions\TranslatableException;
 use App\Facades\CampaignLocalization;
@@ -35,20 +36,22 @@ use Illuminate\Support\Str;
 
 class EntityService
 {
+    use CampaignAware;
+
     /** @var array List of entity types */
     protected array $entities = [];
 
     /** @var bool If the process is copying an entity (this should be moved outside of this class) */
     protected bool $copied = false;
 
-    /** @var Campaign */
-    protected Campaign $campaign;
-
     /** @var bool|array */
     protected bool|array $cachedNewEntityTypes = false;
 
     /** @var bool|array */
     protected bool|array $cachedTags = false;
+
+    /** @var bool If the process is being called in bulk */
+    protected bool $bulk = false;
 
     /** @var array|string[] Popular entity types */
     protected array $popularEntityTypes = [
@@ -90,12 +93,13 @@ class EntityService
     }
 
     /**
-     * @param Campaign $campaign
+     * Tag the service as being called in bulk
+     * @param bool $bulk
      * @return $this
      */
-    public function campaign(Campaign $campaign): self
+    public function bulk(bool $bulk = true): self
     {
-        $this->campaign = $campaign;
+        $this->bulk = $bulk;
         return $this;
     }
 
@@ -275,6 +279,15 @@ class EntityService
             $child->campaign_id = $campaign->id; // Technically don't need this since it's in MiscObserver::saving()
             $child->save();
 
+            Log::info('Move entity', [
+                'user' => auth()->user()->id,
+                'entity' => $entity->id,
+                'type' => $entity->type(),
+                'from' => $currentCampaign->id,
+                'to' => $campaign->id,
+                'bulk' => $this->bulk,
+            ]);
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -317,11 +330,6 @@ class EntityService
                 if (!Storage::exists($newPath)) {
                     Storage::copy($entity->child->image, $newPath);
                 }
-            }
-
-            // Remove map stuff from locations
-            if ($newModel instanceof Location) {
-                $newModel->map = null;
             }
 
             // The model is ready to be saved.
@@ -371,9 +379,20 @@ class EntityService
                 $entity->child->copyRelatedToTarget($newModel);
             }
 
+            Log::info('Copy entity', [
+                'user' => auth()->user()->id,
+                'entity' => $entity->id,
+                'type' => $entity->type(),
+                'from' => $originalCampaign->id,
+                'to' => $newCampaign->id,
+                'bulk' => $this->bulk,
+            ]);
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+
+            dd($e);
         }
 
         // Switch back to the original campaign
@@ -489,6 +508,7 @@ class EntityService
 
         // Update entity to its new type. We don't use a new entity to keep all mentions, attributes and
         // other related elements attached.
+        $oldType = $entity->type();
         $entity->type_id = $new->entityTypeID();
         $entity->entity_id = $new->id;
         $entity->cleanCache()->save();
@@ -505,6 +525,14 @@ class EntityService
 
         // Force delete the old entity to avoid it creating weird issues in the db by being soft deleted.
         $old->forceDelete();
+
+        Log::info('Transform entity', [
+            'user' => auth()->user()->id,
+            'entity' => $entity->id,
+            'from' => $oldType,
+            'to' => $entity->type(false),
+            'bulk' => $this->bulk,
+        ]);
 
         return $entity;
     }
@@ -703,6 +731,12 @@ class EntityService
             $allTags = $this->getAutoApplyTags();
             $model->entity->tags()->attach($allTags);
         }
+        Log::info('Create entity', [
+            'user' => auth()->user()->id,
+            'entity' => $model->entity->id,
+            'type' => $model->entity->type(),
+            'mention' => true
+        ]);
         return $model;
     }
 
@@ -725,7 +759,7 @@ class EntityService
             if (property_exists($old, 'locations')) {
                 $old->locations()->sync([]);
             }
-            return false;
+            return;
         }
 
         foreach ($old->locations as $loc) {

@@ -9,6 +9,7 @@ use App\Services\StarterService;
 use App\User;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @property User $user
@@ -45,6 +46,9 @@ class UserEventSubscriber
         $default = UserLog::TYPE_LOGIN;
         if (auth()->viaRemember()) {
             $default = UserLog::TYPE_AUTOLOGIN;
+            Log::info('Autologin', ['user' => auth()->user()->id]);
+        } else {
+            Log::info('Login', ['user' => auth()->user()->id]);
         }
         $userLogType = session()->get('kanka.userLog', $default);
         $event->user->log($userLogType);

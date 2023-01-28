@@ -58,8 +58,9 @@ abstract class BaseCache
      */
     protected function forget(string $key): bool
     {
-        Log::info(class_basename($this), [
-            'forget' => $key,
+        Log::info('Forget cache', [
+            'key' => $key,
+            'class' => class_basename($this)
         ]);
         return Cache::forget($key);
     }
@@ -83,8 +84,9 @@ abstract class BaseCache
      */
     protected function put(string $key, $data, int $ttl): bool
     {
-        Log::info(class_basename($this), [
-            'put' => $key,
+        Log::info('Put cache', [
+            'key' => $key,
+            'class' => class_basename($this),
         ]);
         return Cache::put($key, $data, $ttl);
     }
@@ -99,8 +101,10 @@ abstract class BaseCache
      */
     protected function forever(string $key, $data, int $days = 7): bool
     {
-        Log::info(class_basename($this), [
-            'forever' => $key,
+        Log::info('Forever cache', [
+            'key' => $key,
+            'class' => class_basename($this),
+            'days' => $days,
         ]);
         return Cache::put($key, $data, $days * 86400);
     }

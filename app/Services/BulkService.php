@@ -159,7 +159,7 @@ class BulkService
         foreach ($this->ids as $id) {
             $entity = $model->findOrFail($id);
             if (auth()->user()->can('update', $entity)) {
-                $this->entityService->move($entity->entity, $options);
+                $this->entityService->bulk()->move($entity->entity, $options);
                 $this->count++;
             }
         }
@@ -188,7 +188,7 @@ class BulkService
         foreach ($this->ids as $id) {
             $entity = $model->findOrFail($id);
             if (auth()->user()->can('update', $entity)) {
-                $this->entityService->transform($entity->entity, $type, $entity);
+                $this->entityService->bulk()->transform($entity->entity, $type, $entity);
                 $this->count++;
             }
         }

@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Journal;
 use App\Http\Requests\StoreJournal as Request;
 use App\Http\Resources\JournalResource as Resource;
+use Illuminate\Support\Facades\Log;
 
 class JournalApiController extends ApiController
 {
@@ -17,6 +18,10 @@ class JournalApiController extends ApiController
     public function index(Campaign $campaign)
     {
         $this->authorize('access', $campaign);
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'journals'
+        ]);
         return Resource::collection($campaign
             ->journals()
             ->filter(request()->all())

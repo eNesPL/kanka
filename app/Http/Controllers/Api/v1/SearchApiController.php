@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Entity;
 use App\Services\EntityService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SearchApiController extends ApiController
 {
@@ -35,6 +36,10 @@ class SearchApiController extends ApiController
     {
         $this->authorize('access', $campaign);
 
+        Log::info('API', [
+            'action' => 'index',
+            'endpoint' => 'search'
+        ]);
         $term = trim($search);
         $enabledEntities = $this->entity->campaign($campaign)->getEnabledEntitiesID();
         $models = Entity::whereIn('type_id', $enabledEntities)->where('name', 'like', "%$term%")->limit(10)->get();

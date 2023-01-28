@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Models\Entity;
 use App\Models\Location;
 use App\Models\MiscModel;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RecoveryService
 {
@@ -18,6 +20,15 @@ class RecoveryService
 
     /** @var int Number of total deleted entities */
     protected int $count = 0;
+
+    /** @var The user recovering entities */
+    protected User $user;
+
+    public function user(User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
 
     /**
      * @param array $ids
@@ -94,6 +105,12 @@ class RecoveryService
         $child->savingObserver = false;
         $child->refresh();
         $child->restore();
+
+        Log::info('Recover entity', [
+            'user' => $this->user->id,
+            'type' => $entity->type(),
+            'entity' => $id,
+        ]);
         return true;
     }
 
@@ -112,8 +129,6 @@ class RecoveryService
         $entity->forceDelete();
 
         ImageService::cleanup($child);
-
-
         $this->count++;
     }
 
@@ -178,7 +193,6 @@ class RecoveryService
         }
 
         $child->forceDelete();
-
 
         // Unset the campaign id limitation again
         \App\Facades\CampaignLocalization::setConsoleCampaign(0);
