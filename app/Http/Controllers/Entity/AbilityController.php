@@ -22,7 +22,7 @@ class AbilityController extends Controller
     use GuestAuthTrait;
 
     /** @var AbilityService */
-    protected $service;
+    protected AbilityService $service;
 
     /**
      * AbilityController constructor.

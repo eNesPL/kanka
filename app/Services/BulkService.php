@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MiscModel;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class BulkService
@@ -98,6 +99,10 @@ class BulkService
             }
         }
 
+        Log::info('Bulk delete entities', [
+            'count' => $this->count
+        ]);
+
         return $this->count;
     }
 
@@ -112,6 +117,11 @@ class BulkService
         foreach ($this->ids as $id) {
             $entities[] = $model->findOrFail($id);
         }
+
+        Log::info('Bulk export', [
+            'count' => count($entities)
+        ]);
+
         return $entities;
     }
 
@@ -132,6 +142,10 @@ class BulkService
                 $this->count++;
             }
         }
+
+        Log::info('Bulk permissions', [
+            'count' => $this->count,
+        ]);
 
         return $this->count;
     }
@@ -381,6 +395,10 @@ class BulkService
                 $this->count++;
             }
         }
+
+        Log::info('Bulk apply templates', [
+            'count' => $this->count
+        ]);
 
         return $this->count;
     }

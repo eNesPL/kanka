@@ -647,6 +647,12 @@ class EntityService
     {
         $entity->is_template = !$entity->is_template;
         $entity->save();
+
+        Log::info('Template entity', [
+            'user' => auth()->user()->id,
+            'entity' => $entity->id,
+            'template' => $entity->is_template,
+        ]);
         return $entity;
     }
 

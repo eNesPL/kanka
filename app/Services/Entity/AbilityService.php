@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use App\Http\Requests\ReorderAbility;
 use Illuminate\Support\Arr;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class AbilityService
 {
@@ -95,6 +96,11 @@ class AbilityService
             $ability->save();
         }
 
+        Log::info('Entity ability reset charge', [
+            'user' => auth()->user()->id,
+            'entity' => $this->entity->id,
+        ]);
+
         return $this;
     }
 
@@ -113,6 +119,11 @@ class AbilityService
 
         $entityAbility->charges = $used;
         $entityAbility->save();
+
+        Log::info('Entity ability use charge', [
+            'user' => auth()->user()->id,
+            'entity' => $this->entity->id,
+        ]);
 
         return true;
     }
@@ -351,6 +362,10 @@ class AbilityService
                 $count++;
             }
         }
+        Log::info('Entity ability import', [
+            'user' => auth()->user()->id,
+            'entity' => $this->entity->id,
+        ]);
 
         return $count;
     }
@@ -376,9 +391,14 @@ class AbilityService
             }
 
             $ability->position = $position;
-            $ability->save();
+            $ability->saveQuietly();
             $position++;
         }
+
+        Log::info('Reorder entity abilities', [
+            'user' => auth()->user()->id,
+            'entity' => $this->entity->id,
+        ]);
         return true;
     }
 }
