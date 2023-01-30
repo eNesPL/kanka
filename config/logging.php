@@ -97,7 +97,15 @@ return [
             'level' => 'debug',
         ],
 
-        'elasticsearch' => [
+        'filebeat' => [
+            'driver' => 'daily',
+            'formatter' => \App\Support\Elasticsearch\ElasticsearchFilebeatFormatter::class,
+            'path' => storage_path('logs/filebeat.log'),
+            'level' => 'debug',
+            'days' => 7,
+        ],
+
+        'elasticsearch' => !empty(env('ELASTIC_HOST')) ? [
             'driver'         => 'monolog',
             'level'          => 'debug',
             'handler'        => ElasticsearchHandler::class,
@@ -109,6 +117,6 @@ return [
             'handler_with'   => [
                 'client' => ClientBuilder::create()->setHosts([env('ELASTIC_HOST')])->build(),
             ],
-        ],
+        ] : [],
     ],
 ];
