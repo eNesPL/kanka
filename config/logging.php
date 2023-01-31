@@ -2,9 +2,7 @@
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
-use Monolog\Handler\ElasticsearchHandler;
-use Monolog\Formatter\ElasticsearchFormatter;
-use Elastic\Elasticsearch\ClientBuilder;
+use App\Support\Elasticsearch\ElasticsearchFilebeatFormatter;
 
 return [
 
@@ -99,24 +97,10 @@ return [
 
         'filebeat' => [
             'driver' => 'daily',
-            'formatter' => \App\Support\Elasticsearch\ElasticsearchFilebeatFormatter::class,
+            'formatter' => ElasticsearchFilebeatFormatter::class,
             'path' => storage_path('logs/filebeat.log'),
             'level' => 'debug',
             'days' => 7,
         ],
-
-        'elasticsearch' => !empty(env('ELASTIC_HOST')) ? [
-            'driver'         => 'monolog',
-            'level'          => 'debug',
-            'handler'        => ElasticsearchHandler::class,
-            'formatter'      => ElasticsearchFormatter::class,
-            'formatter_with' => [
-                'index' => env('ELASTIC_LOGS_INDEX'),
-                'type'  => '_doc',
-            ],
-            'handler_with'   => [
-                'client' => ClientBuilder::create()->setHosts([env('ELASTIC_HOST')])->build(),
-            ],
-        ] : [],
     ],
 ];
