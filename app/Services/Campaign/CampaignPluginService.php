@@ -376,10 +376,10 @@ class CampaignPluginService
                     } elseif ($type == 'quest_element') {
                         $this->saveQuestElement($data, $uuid, $model->id, $pluginEntity);
                     } else {
-                        Log::info('Marketplace content pack error', [
+                        Log::error('Plugin error', [
                             'type' => $type,
                             'entity' => $pluginEntity->id,
-                            'data' => 'Unknown relation type for marketplace entity',
+                            'message' => 'Unknown relation type for marketplace entity',
                         ]);
                     }
                 }
@@ -419,7 +419,12 @@ class CampaignPluginService
             $relation->relation = Arr::get($data, 'relation', null);
             $relation->save();
         } catch (Exception $e) {
-            Log::error('Invalid relation for owner ' . $ownerId . ' and uuid ' . $uuid . ': ' . $e->getMessage());
+            Log::error('Plugin error', [
+                'message' => 'Invalid relation',
+                'owner' => $ownerId,
+                'uuid' => $uuid,
+                'log' => $e->getMessage()
+            ]);
         }
     }
 
@@ -452,7 +457,12 @@ class CampaignPluginService
             $member->role = Arr::get($data, 'role', null);
             $member->save();
         } catch (Exception $e) {
-            Log::error('Invalid org member ' . $uuid . ' for plugin entity #' . $pluginEntity->id . ': ' . $e->getMessage());
+            Log::error('Plugin error', [
+                'message' => 'Invalid member',
+                'entity' => $pluginEntity->id,
+                'uuid' => $uuid,
+                'log' => $e->getMessage()
+            ]);
         }
     }
 
@@ -486,7 +496,13 @@ class CampaignPluginService
             //dd($element);
             $element->save();
         } catch(Exception $e) {
-            Log::error('Invalid quest element ' . $uuid . ' for plugin entity #' . $pluginEntity->id . ' (entity #' . $target . '): ' . $e->getMessage());
+            Log::error('Plugin error', [
+                'message' => 'Invalid quest element',
+                'entity' => $pluginEntity->id,
+                'uuid' => $uuid,
+                'target' => $target,
+                'log' => $e->getMessage()
+            ]);
         }
     }
 
@@ -510,7 +526,11 @@ class CampaignPluginService
             Storage::writeStream($path, Storage::disk('s3-marketplace')->readStream($entity->image_path));
             $model->image = $path;
         } catch (Exception $e) {
-            Log::error('Error importing image from ' . $entity->id . ': ' . $e->getMessage());
+            Log::error('Plugin error', [
+                'message' => 'Invalid image',
+                'entity' => $entity->id,
+                'log' => $e->getMessage()
+            ]);
         }
 
         return $model;
