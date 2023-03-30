@@ -1,16 +1,16 @@
 <div class="box box-solid">
-    <div class="box-header with-border">
+    <div class="box-header">
         <h3 class="box-title">
             {{ __('settings.account.2fa.title') }}
         </h3>
     </div>
-    @if ($user->passwordSecurity?->google2fa_enable)
+    @if (!$user->passwordSecurity?->google2fa_enable)
         <div class="box-body">
             <p class="hep-block">{{ __('settings.account.2fa.enabled') }}</p>
         </div>
 
         <div class="box-footer text-right">
-            <button class="btn btn-danger pull-right" data-toggle="modal" data-target="#deactivate-2fa">
+            <button class="btn btn-outline btn-error" data-toggle="dialog" data-target="delete-tfa">
                 {{ __('settings.account.2fa.actions.disable') }}
             </button>
         </div>
@@ -72,29 +72,30 @@
 
 @section('modals')
     @parent
-    @if($user->passwordSecurity?->google2fa_enable))
-        <div class="modal fade" id="deactivate-2fa" tabindex="-1" role="dialog" aria-labelledby="deactivate2FALabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content rounded-2xl">
-                    <div class="modal-body text-center">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('crud.delete_modal.close') }}"><span aria-hidden="true">&times;</span></button>
-                        <h4>
-                            {{ __('settings.account.2fa.disable.title') }}
-                        </h4>
+    @if(!$user->passwordSecurity?->google2fa_enable))
 
-                        <p class="mt-3">
-                            {{ __('settings.account.2fa.disable.helper') }}                    </p>
-                        <div class="py-5">
-                            {!! Form::model($user, ['method' => 'POST', 'route' => ['settings.security.disable-2fa']]) !!}
-                            <button type="submit" class="btn btn-danger rounded-full px-8">
-                                <i class="fa-solid fa-exclamation-triangle" aria-hidden="true"></i>
-                                {{ __('crud.click_modal.confirm') }}
-                            </button>
-                            {!! Form::close() !!}
-                        </div>
-                    </div>
-                </div>
+    <dialog class="dialog rounded-2xl text-center" id="delete-tfa" aria-modal="true" aria-labelledby="label-delete-tfa">
+        <header>
+            <h4 id="label-delete-tfa">
+                {{ __('settings.account.2fa.disable.title') }}
+            </h4>
+            <button type="button" class="rounded-full" onclick="this.closest('dialog').close('close')">
+                <i class="fa-solid fa-times" aria-hidden="true"></i>
+                <span class="sr-only">{{ __('crud.delete_modal.close') }}</span>
+            </button>
+        </header>
+        {!! Form::model($user, ['method' => 'POST', 'route' => ['settings.security.disable-2fa']]) !!}
+        <article class="p-5 py-2">
+            <p class="mt-3">
+                {{ __('settings.account.2fa.disable.helper') }}                    </p>
+            <div class="py-5">
+                <button type="submit" class="btn btn-error">
+                    <i class="fa-solid fa-exclamation-triangle mr-1" aria-hidden="true"></i>
+                    {{ __('crud.click_modal.confirm') }}
+                </button>
             </div>
-        </div>
+        </article>
+        {!! Form::close() !!}
+    </dialog>
     @endif
 @endsection

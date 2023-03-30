@@ -220,6 +220,18 @@ function initSubmenuSwitcher() {
 
 
 function initDialogs() {
+    $.each($('[data-dialog="open"]'), function () {
+        let target = document.getElementById($(this).attr('id'));
+        target.showModal();
+        target.addEventListener('click', function (event) {
+            let rect = target.getBoundingClientRect();
+            let isInDialog=(rect.top <= event.clientY && event.clientY <= rect.top + rect.height &&
+                rect.left <= event.clientX && event.clientX <= rect.left + rect.width);
+            if (!isInDialog && event.target.tagName === 'DIALOG') {
+                target.close();
+            }
+        });
+    });
     $('[data-toggle="dialog"]').click(function (e) {
         e.preventDefault();
 

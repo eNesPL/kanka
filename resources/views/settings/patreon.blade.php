@@ -7,46 +7,50 @@
 ])
 
 @section('content')
-    <h1>
+
+    <h1 class="mb-5">
         {{ __('settings.patreon.title') }}
     </h1>
+
     @include('partials.errors')
 
     @if(auth()->user()->isLegacyPatron())
-        @includeIf('settings._' . strtolower(auth()->user()->pledge ?: 'kobold'))
+        @includeIf('settings.pledges._' . strtolower(auth()->user()->pledge ?: 'kobold'))
 
-    <div class="text-center">
-        <button class="btn btn-danger" data-toggle="modal"
-                data-target="#remove-patreon">{{ __('settings.patreon.remove.button') }}</button>
-    </div>
-
-
-    <div class="modal fade" id="remove-patreon" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('crud.delete_modal.close') }}"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">{{ __('settings.patreon.remove.title') }}</h4>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted">
-                        {{ __('settings.patreon.remove.text') }}
-                    </p>
-                    {!! Form::model(auth()->user(), ['method' => 'DELETE', 'route' => ['settings.patreon.unlink']]) !!}
-
-                    <button class="btn btn-danger mb-5">
-                        {{ __('crud.click_modal.confirm') }}
-                    </button>
-                    {!! Form::close() !!}
-                </div>
-            </div>
+        <div class="text-center">
+            <button class="btn btn-error" data-toggle="dialog"
+                    data-target="remove-patreon">{{ __('settings.patreon.remove.button') }}</button>
         </div>
-    </div>
     @else
-        <div class="alert alert-warning">
+        <div class="rounded bg-red-100 p-2 text-base">
             <p>
                 {!! __('settings.patreon.deprecated', ['subscription' => link_to_route('settings.subscription', __('settings.menu.subscription'))]) !!}
             </p>
         </div>
     @endif
+@endsection
+
+@section('modals')
+    <dialog class="dialog rounded-2xl text-center" id="remove-patreon" aria-modal="true" aria-labelledby="label-remove-patreon">
+        <header>
+            <h4 id="label-remove-patreon">
+                {{ __('settings.patreon.remove.title') }}
+            </h4>
+            <button type="button" class="rounded-full" onclick="this.closest('dialog').close('close')">
+                <i class="fa-solid fa-times" aria-hidden="true"></i>
+                <span class="sr-only">{{ __('crud.delete_modal.close') }}</span>
+            </button>
+        </header>
+        {!! Form::model(auth()->user(), ['method' => 'DELETE', 'route' => ['settings.patreon.unlink']]) !!}
+        <article class="p-5 py-2">
+            <p class="text-muted">
+                {{ __('settings.patreon.remove.text') }}
+            </p>
+
+            <button class="btn btn-outline btn-error mb-5">
+                {{ __('crud.click_modal.confirm') }}
+            </button>
+        </article>
+        {!! Form::close() !!}
+    </dialog>
 @endsection

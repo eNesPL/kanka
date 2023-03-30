@@ -206,7 +206,7 @@
                         <input id="accountholder-name"  name="accountholder-name" class="form-control mb-5">
 
                         <div class="text-center">
-                            <button class="btn btn-xl btn-success subscription-confirm-button" data-text="{{ __('settings.subscription.actions.subscribe') }}">
+                            <button class="btn btn-xl btn-primary subscription-confirm-button" data-text="{{ __('settings.subscription.actions.subscribe') }}">
                                 <span>{{ __('settings.subscription.actions.subscribe') }}</span>
                                 <i class="fa-solid fa-spin fa-spinner spinner" style="display: none"></i>
                             </button>

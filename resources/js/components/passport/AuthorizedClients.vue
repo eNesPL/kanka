@@ -12,7 +12,7 @@
 
                 <div class="card-body">
                     <!-- Authorized Tokens -->
-                    <table class="table table-borderless mb-0">
+                    <table class="table table-borderless mb-0 w-full text-left">
                         <thead>
                             <tr>
                                 <th>Name</th>

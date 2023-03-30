@@ -73,140 +73,127 @@
         </div>
 
         <!-- Create Client Modal -->
-        <div class="modal fade" id="modal-create-client" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">
-                            Create Client
-                        </h4>
+        <dialog ref="newClient" class="dialog rounded-2xl text-center" id="modal-create-client" tabindex="-1" aria-modal="true" aria-labelledby="label-modal-create-client">
+            <header>
+                <h4 id="label-modal-create-client">
+                    Create Client
+                </h4>
+                <button type="button" class="rounded-full" onclick="this.closest('dialog').close('close')">
+                    <i class="fa-solid fa-times" aria-hidden="true"></i>
+                    <span class="sr-only">Close</span>
+                </button>
+            </header>
+            <article class="text-left p-2">
+                <div class="rounded p-2 text-white bg-red-500" v-if="createForm.errors.length > 0">
+                    <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
+                    <ul>
+                        <li v-for="error in createForm.errors">
+                            {{ error }}
+                        </li>
+                    </ul>
+                </div>
 
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <!-- Create Client Form -->
+                <form role="form" class="w-full">
+                    <!-- Name -->
+                    <div class="form-group mb-2">
+                        <label class="font-bold my-1 inline-block">Name</label>
+
+                        <div class="">
+                            <input id="create-client-name" type="text" class="rounded border w-full p-2"
+                                   @keyup.enter="store" v-model="createForm.name">
+
+                            <span class="form-text text-muted">
+                                Something your users will recognize and trust.
+                            </span>
+                        </div>
                     </div>
 
-                    <div class="modal-body">
-                        <!-- Form Errors -->
-                        <div class="alert alert-danger" v-if="createForm.errors.length > 0">
-                            <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
-                            <br>
-                            <ul>
-                                <li v-for="error in createForm.errors">
-                                    {{ error }}
-                                </li>
-                            </ul>
-                        </div>
+                    <!-- Redirect URL -->
+                    <div class="form-group mb-2">
+                        <label class="font-bold my-1 inline-block">Redirect URL</label>
 
-                        <!-- Create Client Form -->
-                        <form role="form">
-                            <!-- Name -->
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label">Name</label>
+                        <div class="col-md-9">
+                            <input type="text" class="rounded border w-full p-2" name="redirect"
+                                   @keyup.enter="store" v-model="createForm.redirect">
 
-                                <div class="col-md-9">
-                                    <input id="create-client-name" type="text" class="form-control"
-                                                                @keyup.enter="store" v-model="createForm.name">
-
-                                    <span class="form-text text-muted">
-                                        Something your users will recognize and trust.
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Redirect URL -->
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label">Redirect URL</label>
-
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control" name="redirect"
-                                                    @keyup.enter="store" v-model="createForm.redirect">
-
-                                    <span class="form-text text-muted">
+                            <span class="form-text text-muted">
                                         Your application's authorization callback URL.
                                     </span>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
                     </div>
+                </form>
 
-                    <!-- Modal Actions -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <div class="block w-full grid grid-cols-2 gap-2">
+                    <button type="button" class="rounded hover:bg-gray-700 hover:text-white p-2"  onclick="this.closest('dialog').close('close')">Close</button>
 
-                        <button type="button" class="btn btn-primary" @click="store">
-                            Create
-                        </button>
-                    </div>
+                    <button type="button" class="rounded p-2 bg-blue-600 text-white uppercase hover:bg-blue-800" @click="store">
+                        Create
+                    </button>
                 </div>
-            </div>
-        </div>
+            </article>
+        </dialog>
 
         <!-- Edit Client Modal -->
-        <div class="modal fade" id="modal-edit-client" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">
-                            Edit Client
-                        </h4>
+        <dialog ref="editClient" class="dialog rounded-2xl text-center" id="modal-edit-client" tabindex="-1" aria-modal="true" aria-labelledby="label-modal-edit-client">
+            <header>
+                <h4 id="label-modal-edit-client">
+                    Edit Client
+                </h4>
+                <button type="button" class="rounded-full" onclick="this.closest('dialog').close('close')">
+                    <i class="fa-solid fa-times" aria-hidden="true"></i>
+                    <span class="sr-only">Close</span>
+                </button>
+            </header>
+            <article class="text-left p-2">
+                <div class="rounded p-2 text-white bg-red-500" v-if="editForm.errors.length > 0">
+                    <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
+                    <ul>
+                        <li v-for="error in editForm.errors">
+                            {{ error }}
+                        </li>
+                    </ul>
+                </div>
+                <!-- Edit Client Form -->
+                <form role="form" class="w-full">
+                    <!-- Name -->
+                    <div class="form-group mb-2">
+                        <label class="font-bold inline-block my-1">Name</label>
 
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
+                        <div class="">
+                            <input id="edit-client-name" type="text" class="rounded border w-full p-2"
+                                   @keyup.enter="update" v-model="editForm.name">
 
-                    <div class="modal-body">
-                        <!-- Form Errors -->
-                        <div class="alert alert-danger" v-if="editForm.errors.length > 0">
-                            <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
-                            <br>
-                            <ul>
-                                <li v-for="error in editForm.errors">
-                                    {{ error }}
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Edit Client Form -->
-                        <form role="form">
-                            <!-- Name -->
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label">Name</label>
-
-                                <div class="col-md-9">
-                                    <input id="edit-client-name" type="text" class="form-control"
-                                                                @keyup.enter="update" v-model="editForm.name">
-
-                                    <span class="form-text text-muted">
+                            <span class="form-text text-muted">
                                         Something your users will recognize and trust.
                                     </span>
-                                </div>
-                            </div>
-
-                            <!-- Redirect URL -->
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label">Redirect URL</label>
-
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control" name="redirect"
-                                                    @keyup.enter="update" v-model="editForm.redirect">
-
-                                    <span class="form-text text-muted">
-                                        Your application's authorization callback URL.
-                                    </span>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
                     </div>
 
-                    <!-- Modal Actions -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- Redirect URL -->
+                    <div class="form-group mb-2">
+                        <label class="font-bold inline-block my-1">Redirect URL</label>
 
-                        <button type="button" class="btn btn-primary" @click="update">
+                        <div class="">
+                            <input type="text" class="rounded border w-full p-2" name="redirect"
+                                   @keyup.enter="update" v-model="editForm.redirect">
+
+                            <span class="form-text text-muted">
+                                        Your application's authorization callback URL.
+                                    </span>
+                        </div>
+                    </div>
+
+                    <div class="block w-full grid grid-cols-2 gap-2 mt-5">
+                        <button type="button" class="rounded hover:bg-gray-700 hover:text-white p-2"  onclick="this.closest('dialog').close('close')">Close</button>
+
+                        <button type="button" class="rounded p-2 bg-blue-600 text-white uppercase hover:bg-blue-800" @click="update">
                             Save Changes
                         </button>
                     </div>
-                </div>
-            </div>
-        </div>
+                </form>
+            </article>
+        </dialog>
     </div>
 </template>
 
@@ -277,7 +264,7 @@
              * Show the form for creating new clients.
              */
             showCreateClientForm() {
-                $('#modal-create-client').modal('show');
+                this.$refs.newClient.showModal();
             },
 
             /**
@@ -298,7 +285,7 @@
                 this.editForm.name = client.name;
                 this.editForm.redirect = client.redirect;
 
-                $('#modal-edit-client').modal('show');
+                this.$refs.editClient.showModal();
             },
 
             /**
@@ -325,7 +312,8 @@
                         form.redirect = '';
                         form.errors = [];
 
-                        $(modal).modal('hide');
+                        this.$refs.newClient.close('close');
+                        this.$refs.editClient.close('close');
                     })
                     .catch(error => {
                         if (typeof error.response.data === 'object') {

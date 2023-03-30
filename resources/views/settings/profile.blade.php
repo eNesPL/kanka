@@ -7,29 +7,26 @@
 ])
 
 @section('content')
-    <div class="max-w-3xl">
-        @include('partials.errors')
+    <div class="max-w-4xl">
+        <h1 class="mb-5">
+            {{ __('settings.profile.title') }}
+        </h1>
 
         {!! Form::model($user, ['method' => 'PATCH', 'enctype' => 'multipart/form-data', 'route' => ['settings.profile'], 'data-shortcut' => 1]) !!}
         <div class="box box-solid">
-            <div class="box-header with-border">
-                <h4 class="box-title with-border">
-                    {{ __('settings.profile.title') }}
-                </h4>
-            </div>
             <div class="box-body">
-                <div class="row">
-                    <div class="col-md-7">
-                        <div class="form-group required">
-                            <label>{{ __('profiles.fields.name') }}</label>
-                            {!! Form::text('name', null, ['placeholder' => __('profiles.placeholders.name'), 'class' => 'form-control']) !!}
+                <div class="grid gap-5 md:grid-cols-4 mb-2">
+                    <div class="md:col-span-3">
+                        <div class="mb-2">
+                            <label class="font-bold">{{ __('profiles.fields.name') }} <span class="text-red">*</span></label>
+                            {!! Form::text('name', null, ['placeholder' => __('profiles.placeholders.name'), 'class' => 'rounded border w-full p-2']) !!}
                         </div>
 
-                        <div class="form-group">
-                            <label>
+                        <div class="mb-2">
+                            <label class="font-bold">
                                 {{ __('profiles.fields.profile-name') }}
                             </label>
-                            {!! Form::text('settings[marketplace_name]', null, ['class' => 'form-control', 'maxlength' => 32]) !!}
+                            {!! Form::text('settings[marketplace_name]', null, ['class' => 'rounded border w-full p-2', 'maxlength' => 32]) !!}
                             <p class="help-block">
                                 {!! __('profiles.helpers.profile-name', [
         'marketplace' => link_to(config('marketplace.url'), __('front.menu.marketplace'), ['target' => '_blank']),
@@ -37,11 +34,11 @@
                             </p>
                         </div>
 
-                        <div class="form-group">
-                            <label>
+                        <div class="mb-2">
+                            <label class="font-bold">
                                 {{ __('profiles.fields.bio') }}
                             </label>
-                            {!! Form::textarea('profile[bio]', null, ['placeholder' => __('profiles.placeholders.bio'), 'class' => 'form-control', 'rows' => 5, 'maxlength' => 300]) !!}
+                            {!! Form::textarea('profile[bio]', null, ['placeholder' => __('profiles.placeholders.bio'), 'class' => 'rounded border w-full p-2', 'rows' => 5, 'maxlength' => 300]) !!}
                             <p class="help-block">
                                 {!!  __('profiles.settings.helpers.bio', [
         'link' => link_to_route('users.profile', __('profiles.settings.helpers.profile'), $user, ['target' => '_blank'])
@@ -67,7 +64,7 @@
                             </div>
                         @endif
                     </div>
-                    <div class="col-md-4 col-md-offset-1">
+                    <div class="md:col-span-1">
                         <label>
                             {{ __('settings.profile.avatar') }}
                         </label>
@@ -83,8 +80,8 @@
                     </div>
                 </div>
             </div>
-            <div class="box-footer text-right">
-                <button class="btn btn-primary">
+            <div class="text-right p-5">
+                <button class="rounded bg-blue-600 text-white uppercase px-6 py-2 hover:bg-blue-800">
                     {{ __('settings.profile.actions.update_profile') }}
                 </button>
             </div>

@@ -7,8 +7,8 @@
 
 @section('content')
     @include('partials.errors')
-    <div class="max-w-3xl">
-        <div class="alert alert-info">
+    <div class="max-w-4xl">
+        <div class="rounded p-5 bg-blue-100 text-blue-500 mb-5">
             <p>{{ __('settings.api.helper') }}</p>
             <a href="/{{ app()->getLocale() }}{{ config('larecipe.docs.route') }}/1.0/overview" class="btn btn-info" target="_blank">
                 <i class="fa-solid fa-external-link-square" aria-hidden="true"></i>
@@ -16,13 +16,12 @@
             </a>
         </div>
         <div class="grid md:grid-cols-2 gap-2" id="api">
-                <div class="box box-solid">
-                    <div class="box-body">
-
-                        <passport-authorized-clients></passport-authorized-clients>
-                        <passport-personal-access-tokens></passport-personal-access-tokens>
-                    </div>
+            <div class="box box-solid">
+                <div class="box-body">
+                    <passport-authorized-clients></passport-authorized-clients>
+                    <passport-personal-access-tokens></passport-personal-access-tokens>
                 </div>
+            </div>
 
             @if (request()->has('clients'))
 

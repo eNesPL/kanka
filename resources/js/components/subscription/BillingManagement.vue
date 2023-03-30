@@ -2,7 +2,7 @@
     <div>
 
         <div v-show="paymentMethodsLoadStatus != 2" class="text-center">
-            <i class="fa-solid fa-spin fa-spinner"></i>
+            <i class="fa-solid fa-spin fa-spinner" aria-hidden="true"></i>
         </div>
         <div v-show="paymentMethodsLoadStatus == 2
     && paymentMethods.length > 0">
@@ -30,45 +30,52 @@
         <div v-show="paymentMethodsLoadStatus == 2 && paymentMethods.length == 0">
             <p class="help-block">
                 {{ translate('add_one') }}
-                <a href="#" v-on:click.close="toggleShowNewPaymentMethod">
+                <a href="#" v-on:click.close="openModal()">
                     <i class="far fa-credit-card"></i> {{ translate('actions.add_new') }}
                 </a>
             </p>
         </div>
 
-        <div class="showNewCard" v-show="showNewPaymentMethod">
-            <div class="modal" tabindex="-1" role="dialog" style="display: block">
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" v-on:click="toggleShowNewPaymentMethod"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="clickModalLabel">
-                                <h4 class="box-title">{{ translate('new_card') }}</h4>
-                            </h4>
-                        </div>
-                        <div class="modal-body">
-                            <label>{{ translate('card_name') }}</label>
-                            <input id="card-holder-name" type="text" v-model="name" class="form-control mb-2">
+        <div class="showNewCard">
 
-                            <label>{{ translate('card') }}</label>
-                            <div id="card-element">
+            <dialog ref="newCard" class="dialog rounded-2xl text-center" id="modal-add" tabindex="-1" aria-modal="true">
+                <header>
+                    <h4 id="label-modal-add">
+                        {{ translate('new_card') }}
+                    </h4>
+                    <button type="button" class="rounded-full" onclick="this.closest('dialog').close('close')">
+                        <i class="fa-solid fa-times" aria-hidden="true"></i>
+                        <span class="sr-only">Close</span>
+                    </button>
+                </header>
+                <article class="text-left p-2">
 
-                            </div>
-                            <p class="help-block">
-                                {{ translate('helper') }}
-                            </p>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-primary" id="add-card-button" v-on:click="submitPaymentMethod()" v-show="savePaymentMethodStatus == 0">
-                                {{ translate('actions.save') }}
-                            </button>
-                            <button class="btn btn-primary" v-show="savePaymentMethodStatus != 0" disabled="disabled">
-                                <i class="fa-solid fa-spin fa-spinner"></i>
-                            </button>
-                        </div>
+                    <label class="inline-block font-bold">{{ translate('card_name') }}</label>
+                    <div class="w-full">
+                        <input id="card-holder-name" type="text" v-model="name" class="rounded border p-2 w-full">
                     </div>
-                </div>
-            </div>
+
+                    <label class="inline-block font-bold my-1">{{ translate('card') }}</label>
+                    <div id="card-element">
+
+                    </div>
+                    <p class="help-block">
+                        {{ translate('helper') }}
+                    </p>
+
+                    <div class="block w-full grid grid-cols-2 gap-2">
+                        <button type="button" class="rounded hover:bg-gray-700 hover:text-white p-2" onclick="this.closest('dialog').close('close')">Close</button>
+
+                        <button type="button" class="rounded p-2 bg-blue-600 text-white uppercase hover:bg-blue-800" v-on:click="submitPaymentMethod()" v-show="savePaymentMethodStatus == 0">
+                            {{ translate('actions.save') }}
+                        </button>
+
+                        <button class="rounded hover:bg-gray-700 hover:text-white p-2" v-show="savePaymentMethodStatus != 0" disabled="disabled">
+                            <i class="fa-solid fa-spin fa-spinner"></i>
+                        </button>
+                    </div>
+                </article>
+            </dialog>
         </div>
     </div>
 </template>
@@ -218,6 +225,10 @@
 
             toggleShowNewPaymentMethod() {
                 this.showNewPaymentMethod = !this.showNewPaymentMethod;
+            },
+
+            openModal() {
+                this.$refs.newCard.showModal();
             },
 
             translate(key) {

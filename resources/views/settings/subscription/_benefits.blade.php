@@ -12,7 +12,7 @@
     <td>{{ __('tiers.features.map_size', ['size' => '50 MB']) }}</td>
 </tr>
 <tr>
-    <td>{{ __('tiers.features.pagination', ['amount' => 45]) }}</td>
+    <td><span class="break-all">{{ __('tiers.features.pagination', ['amount' => 45]) }}</span></td>
     <td>{{ __('tiers.features.pagination', ['amount' => 100]) }}</td>
     <td>{{ __('tiers.features.pagination', ['amount' => 100]) }}</td>
     <td>{{ __('tiers.features.pagination', ['amount' => 100]) }}</td>

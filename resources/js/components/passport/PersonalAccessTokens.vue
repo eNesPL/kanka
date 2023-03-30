@@ -8,13 +8,13 @@
     <div>
         <div>
             <div class="card card-default">
-                <div class="card-header">
+                <div class="card-header mb-2">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span>
                             Personal Access Tokens
                         </span>
 
-                        <a class="action-link" tabindex="-1" @click="showCreateTokenForm">
+                        <a class="cursor-pointer" tabindex="-1" @click="showCreateTokenForm">
                             Create New Token
                         </a>
                     </div>
@@ -27,7 +27,7 @@
                     </p>
 
                     <!-- Personal Access Tokens -->
-                    <table class="table table-borderless mb-0" v-if="tokens.length > 0">
+                    <table class="table table-borderless mb-0 w-full text-left" v-if="tokens.length > 0">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -36,15 +36,16 @@
                         </thead>
 
                         <tbody>
-                            <tr v-for="token in tokens">
+                            <tr v-for="token in tokens" class="border-b border-slate-600">
                                 <!-- Client Name -->
-                                <td style="vertical-align: middle;">
+                                <td style="vertical-align: middle;" class="px-0 py-2">
                                     {{ token.name }}
                                 </td>
 
                                 <!-- Delete Button -->
-                                <td style="vertical-align: middle;">
-                                    <a class="action-link text-danger" @click="revoke(token)">
+                                <td style="vertical-align: middle;" class="px-0 py-2 text-right">
+                                    <a class="cursor-pointer text-red-500" @click="revoke(token)">
+                                        <i class="fa-solid fa-trash" aria-hidden="true"></i>
                                         Delete
                                     </a>
                                 </td>
@@ -56,101 +57,89 @@
         </div>
 
         <!-- Create Token Modal -->
-        <div class="modal fade" id="modal-create-token" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">
-                            Create Token
-                        </h4>
-
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-
-                    <div class="modal-body">
-                        <!-- Form Errors -->
-                        <div class="alert alert-danger" v-if="form.errors.length > 0">
-                            <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
-                            <br>
-                            <ul>
-                                <li v-for="error in form.errors">
-                                    {{ error }}
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Create Token Form -->
-                        <form role="form" @submit.prevent="store">
-                            <!-- Name -->
-                            <div class="form-group row">
-                                <label class="col-md-4 col-form-label">Name</label>
-
-                                <div class="col-md-6">
-                                    <input id="create-token-name" type="text" class="form-control" name="name" v-model="form.name">
-                                </div>
-                            </div>
-
-                            <!-- Scopes -->
-                            <div class="form-group row" v-if="scopes.length > 0">
-                                <label class="col-md-4 col-form-label">Scopes</label>
-
-                                <div class="col-md-6">
-                                    <div v-for="scope in scopes">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox"
-                                                    @click="toggleScope(scope.id)"
-                                                    :checked="scopeIsAssigned(scope.id)">
-
-                                                    {{ scope.id }}
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Modal Actions -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                        <button type="button" class="btn btn-primary" @click="store">
-                            Create
-                        </button>
-                    </div>
+        <dialog ref="newToken" class="dialog rounded-2xl text-center" id="modal-create-token" tabindex="-1" aria-modal="true" aria-labelledby="label-modal-create-token">
+            <header>
+                <h4 id="label-modal-create-token">
+                    Create Token
+                </h4>
+                <button type="button" class="rounded-full" onclick="this.closest('dialog').close('close')">
+                    <i class="fa-solid fa-times" aria-hidden="true"></i>
+                    <span class="sr-only">Close</span>
+                </button>
+            </header>
+            <article>
+                <div class="rounded p-2 text-white bg-red-500" v-if="form.errors.length > 0">
+                    <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
+                    <ul>
+                        <li v-for="error in form.errors">
+                            {{ error }}
+                        </li>
+                    </ul>
                 </div>
-            </div>
-        </div>
+
+                <!-- Create Token Form -->
+                <form role="form" class="w-full text-left" @submit.prevent="store">
+                    <!-- Name -->
+                    <div class="mb-4">
+                        <label class="font-bold">Name</label>
+
+                        <div class="">
+                            <input id="create-token-name" type="text" class="w-full rounded border p-2" name="name" v-model="form.name">
+                        </div>
+                    </div>
+
+                    <!-- Scopes -->
+                    <div class="mb-4" v-if="scopes.length > 0">
+                        <label class="font-bold">Scopes</label>
+
+                        <div v-for="scope in scopes">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"
+                                           @click="toggleScope(scope.id)"
+                                           :checked="scopeIsAssigned(scope.id)">
+
+                                    {{ scope.id }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="block w-full grid grid-cols-2 gap-2">
+                    <button type="button" class="rounded hover:bg-gray-700 hover:text-white p-2" onclick="this.closest('dialog').close('close')">Close</button>
+
+                    <button type="button" class="rounded p-2 bg-blue-600 text-white uppercase hover:bg-blue-800" @click="store">
+                        Create
+                    </button>
+                </div>
+            </article>
+        </dialog>
 
         <!-- Access Token Modal -->
-        <div class="modal fade" id="modal-access-token" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">
-                            Personal Access Token
-                        </h4>
+        <dialog ref="accessToken" class="dialog rounded-2xl text-center" id="modal-access-token" tabindex="-1" aria-modal="true" aria-labelledby="label-modal-access-token">
+            <header>
+                <h4 id="label-modal-access-token">
+                    Personal Access Token
+                </h4>
+                <button type="button" class="rounded hover:bg-gray-700 hover:text-white p-2" onclick="this.closest('dialog').close('close')">
+                    <i class="fa-solid fa-times" aria-hidden="true"></i>
+                    <span class="sr-only">Close</span>
+                </button>
+            </header>
+            <article class="text-left p-2">
+                <p>
+                    Here is your new personal access token. This is the only time it will be shown so don't lose it!
+                    You may now use this token to make API requests.
+                </p>
 
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
+                <textarea class="rounded border w-full p-2" rows="8">{{ accessToken }}</textarea>
 
-                    <div class="modal-body">
-                        <p>
-                            Here is your new personal access token. This is the only time it will be shown so don't lose it!
-                            You may now use this token to make API requests.
-                        </p>
 
-                        <textarea class="form-control" rows="10">{{ accessToken }}</textarea>
-                    </div>
+                <button type="button" class="rounded hover:border p-2"  onclick="this.closest('dialog').close('close')">Close</button>
+            </article>
+        </dialog>
 
-                    <!-- Modal Actions -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -225,7 +214,7 @@
              * Show the form for creating new tokens.
              */
             showCreateTokenForm() {
-                $('#modal-create-token').modal('show');
+                this.$refs.newToken.showModal();
             },
 
             /**
@@ -245,6 +234,8 @@
                             this.tokens.push(response.data.token);
 
                             this.showAccessToken(response.data.accessToken);
+
+
                         })
                         .catch(error => {
                             if (typeof error.response.data === 'object') {
@@ -277,11 +268,11 @@
              * Show the given access token to the user.
              */
             showAccessToken(accessToken) {
-                $('#modal-create-token').modal('hide');
 
+                this.$refs.newToken.close('close');
                 this.accessToken = accessToken;
 
-                $('#modal-access-token').modal('show');
+                this.$refs.accessToken.showModal();
             },
 
             /**

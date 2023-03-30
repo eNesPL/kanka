@@ -12,18 +12,17 @@
 @section('content')
     @include('partials.errors')
     <div class="max-w-3xl">
+
+        <h1 class="mb-5">
+            {{ __('billing/payment_methods.title') }}
+        </h1>
+        <p class="text-lg">
+            {!! __('settings.subscription.billing.helper', [
+                'stripe' => link_to('https://www.stripe.com', 'Stripe', ['target' => '_blank'])
+            ]) !!}
+        </p>
         <div class="box box-solid">
-            <div class="box-header with-border">
-                <h3 class="box-title">
-                    {{ __('billing/payment_methods.title') }}
-                </h3>
-            </div>
             <div class="box-body">
-                <p>
-                    {!! __('settings.subscription.billing.helper', [
-                        'stripe' => link_to('https://www.stripe.com', 'Stripe', ['target' => '_blank'])
-                    ]) !!}
-                </p>
 
                 <strong>
                     {{ __('settings.subscription.billing.saved' )}}
@@ -38,11 +37,11 @@
                 <hr />
 
                 {!! Form::model(auth()->user(), ['method' => 'PATCH', 'route' => ['billing.payment-method.save']]) !!}
-                <div class="form-group">
-                    <label>{{ __('settings.subscription.fields.currency') }}</label>
-                    {!! Form::select('currency', ['' => __('settings.subscription.currencies.usd'), 'eur' => __('settings.subscription.currencies.eur')], auth()->user()->currency(), ['class' => 'form-control']) !!}
+                <div class="w-full mb-2">
+                    <label class="font-bold inline-block my-1">{{ __('settings.subscription.fields.currency') }}</label>
+                    {!! Form::select('currency', ['' => __('settings.subscription.currencies.usd'), 'eur' => __('settings.subscription.currencies.eur')], auth()->user()->currency(), ['class' => 'rounded border w-full p-2']) !!}
                 </div>
-                <button class="btn btn-primary mb-5">
+                <button class="rounded px-6 py-2 uppercase bg-blue-600 text-white hover:bg-blue-800 ">
                     {{ __('settings.subscription.actions.update_currency') }}
                 </button>
                 {!! Form::close() !!}

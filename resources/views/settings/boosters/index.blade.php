@@ -14,7 +14,7 @@
     @include('partials.errors')
 
     <div class="max-w-3xl">
-        <h1>
+        <h1 class="mb-5">
             <i class="fa-solid fa-rocket" aria-hidden="true"></i>
             {{ __('settings/boosters.title') }}
         </h1>
@@ -84,7 +84,7 @@
             {{ __('settings/boosters.ready.title') }}
 
             @if (auth()->user()->hasBoosters() || !empty(auth()->user()->booster_count))
-                <div class="label bg-boost text-white ml-3" data-toggle="tooltip" title="{{ __('settings/boosters.ready.available') }}">
+                <div class="rounded inline-block label bg-boost text-white ml-3 px-2 py-1 text-base" title="{{ __('settings/boosters.ready.available') }}">
                     <i class="fa-solid fa-rocket" aria-hidden="true"></i>
                     {{ auth()->user()->availableBoosts() }}
                 </div>
@@ -118,20 +118,23 @@
 
 @section('modals')
     @parent
+
+    <dialog class="dialog rounded-2xl text-center" id="boost-modal" aria-modal="true" aria-labelledby="privacyDialogTitle">
+        <article class="loader text-center p-5">
+            <i class="fa-solid fa-spinner fa-spin fa-2x" aria-hidden="true"></i>
+        </article>
+    </dialog>
     @if ($focus)
-        <div class="modal fade" id="focus-modal" tabindex="-1" role="dialog" >
-            <div class="modal-dialog" role="document">
-                <div class="modal-content rounded-2xl">
-                    @include('settings.boosters.create', [
-                        'campaign' => $focus,
-                        'superboost' => $superboost,
-                        'cost' => $superboost ? 3 : 1,
-                        'canSuperboost' => auth()->user()->availableBoosts() >= 3
-                    ])
-                </div>
-            </div>
-        </div>
+        <dialog class="dialog rounded-2xl text-center min-w-fit" id="focus-modal-2" aria-modal="true" aria-labelledby="boostedDialogTitle" data-dialog="open">
+            @include('settings.boosters.create', [
+                'campaign' => $focus,
+                'superboost' => $superboost,
+                'cost' => $superboost ? 3 : 1,
+                'canSuperboost' => auth()->user()->availableBoosts() >= 3
+            ])
+        </dialog>
     @endif
+
 @endsection
 
 @section('scripts')

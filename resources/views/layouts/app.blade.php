@@ -41,12 +41,20 @@ $showSidebar = (!empty($sidebar) && $sidebar === 'settings') || !empty($campaign
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon-180x180.png" />
 
     <!-- Styles -->
+    @if (empty($sidebar) || $sidebar !== 'settings')
     <link href="/css/bootstrap.css?v={{ config('app.version') }}" rel="stylesheet">
     @vite([
         'resources/sass/vendor.scss',
         'resources/sass/app.scss',
         'resources/sass/freyja/freyja.scss'
     ])
+    @else
+    @vite([
+        'resources/sass/app.scss',
+        'resources/sass/freyja/freyja.scss',
+        'resources/sass/freyja/buttons.scss',
+    ])
+    @endif
     @if (!config('fontawesome.kit'))<link href="/vendor/fontawesome/6.0.0/css/all.min.css" rel="stylesheet">@endif
     @yield('styles')
     @include('layouts._theme')
@@ -119,6 +127,7 @@ $showSidebar = (!empty($sidebar) && $sidebar === 'settings') || !empty($campaign
     </div>
 
     <!-- Default modal used throughout the app -->
+@if (!isset($sidebar) || $sidebar !== 'settings')
     <div class="modal fade z-[9900]" id="entity-modal" role="dialog" tabindex="-1" aria-labelledby="deleteConfirmLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content rounded-2xl"></div>
@@ -138,7 +147,7 @@ $showSidebar = (!empty($sidebar) && $sidebar === 'settings') || !empty($campaign
     </div>
 
     @includeWhen(auth()->check(), 'layouts.modals.delete')
-
+@endif
     @yield('modals')
 
     <div class="toast-container fixed overflow-y-auto overflow-x-hidden bottom-4 right-4 max-h-full"></div>

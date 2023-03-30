@@ -66,6 +66,7 @@ return [
             ],
             'text'      => 'Access your subscription roles automatically.',
             'unlock'    => 'Unlock Discord roles',
+            'confirm' => 'Are you sure you want to disconnect your account from Discord? This will remove any roles you have been synced with.',
         ],
         'title'     => 'App Integration',
     ],

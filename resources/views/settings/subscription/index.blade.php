@@ -12,7 +12,7 @@
 ])
 
 @section('content')
-    <div class="max-w-4xl">
+    <div class="max-w-5xl">
         @include('partials.errors')
         @if (session('sub_value'))
             <div class="text-center">
@@ -102,8 +102,8 @@
                     {{ __('settings.subscription.tiers') }}
                 </h3>
                 <div class="box-tools">
-                    <button class="btn btn-box-tool" data-toggle="modal"
-                            data-target="#change-information">
+                    <button class="btn btn-box-tool" data-toggle="dialog"
+                            data-target="change-information">
                         <i class="fa-solid fa-question-circle" aria-hidden="true"></i> {{ __('settings.subscription.upgrade_downgrade.button') }}
                     </button>
                 </div>
@@ -118,7 +118,10 @@
                     </label>
                     <span>{{ __('tiers.toggle.yearly') }}</span>
                 </div>
+            </div>
+        </div>
 
+            <div class="overflow-x-auto mb-5">
                 <table class="table table-bordered tiers">
                     <thead>
                     <tr class="ab-testing-a">
@@ -278,16 +281,13 @@
                     @include('settings.subscription._benefits')
                 </table>
             </div>
-            <div class="box-footer">
-                <p class="help-block">
-                    {!! __('settings.subscription.trial_period', ['email' => link_to('mailto:' .  config('app.email'), config('app.email'))]) !!}
-                </p>
-                <hr />
-                <p class="help-block">
-                    {!! __('settings.subscription.helpers.paypal', ['email' => link_to('mailto:' .  config('app.email'), config('app.email'))]) !!}
-                </p>
-            </div>
-        </div>
+
+            <p class="help-block">
+                {!! __('settings.subscription.trial_period', ['email' => link_to('mailto:' .  config('app.email'), config('app.email'))]) !!}
+            </p>
+            <p class="help-block">
+                {!! __('settings.subscription.helpers.paypal', ['email' => link_to('mailto:' .  config('app.email'), config('app.email'))]) !!}
+            </p>
     </div>
 
 
@@ -296,45 +296,44 @@
 
 @section('modals')
     @parent
-    <div class="modal fade" id="change-information" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    @include('partials.modals.close')
-                    <div class="quick-creator-header mt-8 pb-4 mb-4">
-                        <div>
-                            <div class="text-2xl">
-                                {{ __('settings.subscription.upgrade_downgrade.button') }}
-                            </div>
-                        </div>
-                    </div>
-                    <h4>{{ __('settings.subscription.upgrade_downgrade.upgrade.title') }}</h4>
-                    <ul>
-                        @foreach(__('settings.subscription.upgrade_downgrade.upgrade.bullets') as $key => $text)
-                            <li>{{ $text }}</li>
-                        @endforeach
-                    </ul>
+    <dialog class="dialog rounded-2xl text-center" id="change-information" aria-modal="true" aria-labelledby="label-change-information">
+        <header>
+            <h4 id="label-change-information">
+                {{ __('settings.subscription.upgrade_downgrade.button') }}
+            </h4>
+            <button type="button" class="rounded-full" onclick="this.closest('dialog').close('close')">
+                <i class="fa-solid fa-times" aria-hidden="true"></i>
+                <span class="sr-only">{{ __('crud.delete_modal.close') }}</span>
+            </button>
+        </header>
+        <article class="text-left">
+            <h4>{{ __('settings.subscription.upgrade_downgrade.upgrade.title') }}</h4>
+            <ul>
+                @foreach(__('settings.subscription.upgrade_downgrade.upgrade.bullets') as $key => $text)
+                    <li>{{ $text }}</li>
+                @endforeach
+            </ul>
 
-                    <hr />
+            <hr class="border-t m-0 w-full h-1"/>
 
-                    <h4>{{ __('settings.subscription.upgrade_downgrade.downgrade.title') }}</h4>
-                    <ul>
-                        @foreach(__('settings.subscription.upgrade_downgrade.downgrade.bullets') as $key => $text)
-                            <li>{{ $text }}</li>
-                        @endforeach
-                    </ul>
+            <h4>{{ __('settings.subscription.upgrade_downgrade.downgrade.title') }}</h4>
+            <ul>
+                @foreach(__('settings.subscription.upgrade_downgrade.downgrade.bullets') as $key => $text)
+                    <li>{{ $text }}</li>
+                @endforeach
+            </ul>
 
-                    <hr />
-                    <h4>{{ __('settings.subscription.upgrade_downgrade.cancel.title') }}</h4>
-                    <ul>
-                        <li>{{ __('settings.subscription.upgrade_downgrade.cancel.bullets.kobold') }}</li>
-                        <li>{{ __('settings.subscription.upgrade_downgrade.cancel.bullets.bonuses') }}</li>
-                        <li>{{ __('settings.subscription.upgrade_downgrade.cancel.bullets.boosts') }}</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+            <hr class="border-t m-0 w-full h-1"/>
+
+            <h4>{{ __('settings.subscription.upgrade_downgrade.cancel.title') }}</h4>
+            <ul>
+                <li>{{ __('settings.subscription.upgrade_downgrade.cancel.bullets.kobold') }}</li>
+                <li>{{ __('settings.subscription.upgrade_downgrade.cancel.bullets.bonuses') }}</li>
+                <li>{{ __('settings.subscription.upgrade_downgrade.cancel.bullets.boosts') }}</li>
+            </ul>
+        </article>
+    </dialog>
+
 
     <div class="modal fade" id="change-currency" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmLabel">
         <div class="modal-dialog" role="document">

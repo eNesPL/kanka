@@ -8,6 +8,14 @@ export default defineConfig({
         hmr: {
             host: 'kanka.test',
         },
+        watch: {
+            ignored: [
+                '**/vendor/**',
+                '**/lang/**',
+                '**/public/**',
+                '**/storage/debugbar/**'
+            ],
+        },
     },
     plugins: [
         laravel([
@@ -53,6 +61,7 @@ export default defineConfig({
             'resources/sass/themes/midnight.scss',
             'resources/sass/tinymce.scss',
             'resources/sass/freyja/freyja.scss',
+            'resources/sass/freyja/buttons.scss',
             'resources/sass/print/print.scss',
         ]),
         vue({

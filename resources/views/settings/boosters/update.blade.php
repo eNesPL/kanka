@@ -4,15 +4,19 @@
  * @var \App\Models\CampaignBoost $boost
  */
 ?>
-
-<div class="modal-body text-center">
-    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('crud.delete_modal.close') }}"><span aria-hidden="true">&times;</span></button>
-
-    <h4 class="mt-0">
+<header>
+    <h4 id="boostedDialogTitle">
         {!! __('settings/boosters.superboost.title', ['campaign' => $campaign->name]) !!}
     </h4>
-
+    <button type="button" class="rounded-full" onclick="this.closest('dialog').close('close')">
+        <i class="fa-solid fa-times" aria-hidden="true"></i>
+        <span class="sr-only">{{ __('crud.delete_modal.close') }}</span>
+    </button>
+</header>
+<article class="text-center">
+    <div class="w-full">
     @include ('partials.boost_icon')
+    </div>
 
     @if ($campaign->superboosted())
         <p>{!! __('settings/boosters.superboost.errors.boosted', ['campaign' => $campaign->name])!!}</p>
@@ -39,7 +43,7 @@
                 {{ __('settings/boosters.boost.pitch') }}
             </p>
 
-            <div class="text-center my-5">
+            <div class="text-center my-3">
                 <a href="{{ route('front.boosters') }}" target="_blank" class="btn bg-boost text-white rounded-full px-8 mr-5">
                     {!! __('callouts.booster.learn-more') !!}
                 </a>
@@ -50,21 +54,21 @@
         @endsubscriber
     @else
 
-        <p class="my-5">
+        <p class="my-3">
             {!! __('settings/boosters.superboost.upgrade', [
     'cost' => '<code>' . $cost . '</code>',
     'campaign' => '<strong>' . $campaign->name . '</strong>'
     ])!!}
         </p>
-        <p class="my-5">{{ __('settings/boosters.boost.duration') }}</p>
+        <p class="my-3">{{ __('settings/boosters.boost.duration') }}</p>
 
-       {!! Form::model($boost, ['route' => ['campaign_boosts.update', $boost], 'method' => 'PATCH']) !!}
-        <div class="pb-5">
-            <button type="button" class="btn px-8 rounded-full mr-5" data-dismiss="modal">
+       {!! Form::model($boost, ['route' => ['campaign_boosts.update', $boost], 'method' => 'PATCH', 'class' => 'w-full']) !!}
+        <div class="flex gap-2 justify-center mb-5">
+            <button type="button" class="btn btn-ghost"  onclick="this.closest('dialog').close('close')">
                 {{ __('crud.cancel') }}
             </button>
-            <button type="submit" class="btn bg-boost text-white px-8 ml-5 rounded-full">
-                <span class="fa-solid fa-rocket" aria-hidden="true"></span>
+            <button type="submit" class="btn bg-boost">
+                <span class="fa-solid fa-rocket mr-1" aria-hidden="true"></span>
                 <span class="">{{ __('settings/boosters.superboost.actions.confirm') }}</span>
             </button>
         </div>
@@ -72,4 +76,4 @@
         {!! Form::hidden('campaign_id', $campaign->id) !!}
         {!! Form::close() !!}
     @endif
-</div>
+</article>
